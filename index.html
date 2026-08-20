@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NoteNest AI</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Inter:wght@400;500;600;700;800&family=Patrick+Hand&display=swap" rel="stylesheet">
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+
+  <style>
+    :root {
+      --bg-color: #0b0c10;
+      --card-bg: #12141a;
+      --yellow: #facc15;
+      --text-white: #ffffff;
+      --text-sub: #9ca3af;
+      --border-color: #232730;
+      --icon-bg: #22251a;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-white);
+      display: flex; flex-direction: column; align-items: center;
+      min-height: 100vh; padding: 20px 16px;
+    }
+
+    header {
+      width: 100%; max-width: 450px;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 10px 0 30px 0;
+    }
+
+    .logo { font-size: 1.6rem; font-weight: 800; display: flex; align-items: center; gap: 8px; }
+    .logo-badge { background-color: var(--yellow); color: #000; font-size: 0.7rem; font-weight: 800; padding: 2px 6px; border-radius: 6px; }
+
+    .main-container { width: 100%; max-width: 450px; }
+
+    .hero-title { font-size: 2.2rem; font-weight: 800; text-align: center; margin-bottom: 16px; }
+    .hero-title span { color: var(--yellow); }
+    .hero-subtitle { text-align: center; color: var(--text-sub); font-size: 0.95rem; margin-bottom: 30px; }
+
+    .card { background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 24px; padding: 32px 20px; text-align: center; }
+
+    .upload-icon-wrapper {
+      width: 64px; height: 64px; background-color: var(--icon-bg);
+      border-radius: 16px; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px auto;
+    }
+    .upload-icon-wrapper svg { width: 28px; height: 28px; stroke: var(--yellow); }
+
+    .btn-choose { background-color: var(--yellow); color: #000; font-weight: 700; font-size: 0.95rem; padding: 12px 28px; border-radius: 12px; border: none; cursor: pointer; }
+
+    .step-2-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 24px; text-align: left; }
+    .options-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; }
+
+    .option-item {
+      background-color: #161922; border: 1px solid var(--border-color);
+      border-radius: 16px; padding: 16px; display: flex; align-items: center; gap: 16px; cursor: pointer; text-align: left;
+    }
+    .option-item.active { border-color: var(--yellow); background-color: #1a1e29; }
+
+    .opt-icon { width: 44px; height: 44px; border-radius: 12px; background-color: #23271a; display: flex; align-items: center; justify-content: center; color: var(--yellow); font-size: 1.2rem; font-weight: bold; }
+
+    .btn-generate { width: 100%; background-color: var(--yellow); color: #000; font-weight: 700; font-size: 1rem; padding: 16px; border-radius: 14px; border: none; cursor: pointer; }
+
+    .sheet-preview { margin-top: 30px; display: none; width: 100%; }
+    .handwritten-sheet {
+      background-color: #ffffff; color: #1a1a1a; padding: 28px 20px; border-radius: 12px;
+      font-family: 'Patrick Hand', cursive; font-size: 1.25rem; line-height: 1.6;
+      background-image: radial-gradient(#e5e7eb 1px, transparent 1px); background-size: 16px 16px;
+    }
+    .handwritten-sheet h2 {
+      font-family: 'Caveat', cursive; font-size: 2.3rem; color: #0284c7;
+      background-color: #e0f2fe; display: inline-block; padding: 2px 10px; border-radius: 8px; margin-bottom: 12px;
+    }
+    .handwritten-sheet .formula-box {
+      background-color: #f3e8ff; border: 2px dashed #9333ea; padding: 12px;
+      border-radius: 10px; margin: 12px 0; text-align: center; font-size: 1.3rem; font-weight: bold; color: #6b21a8;
+    }
+    .handwritten-sheet ul { margin-left: 20px; margin-bottom: 15px; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo">NoteNest <span class="logo-badge">FAST</span></div>
+  </header>
+
+  <div class="main-container">
+    
+    <div id="step1">
+      <h1 class="hero-title">Turn any PDF into<br><span>smart study<br>notes.</span></h1>
+      <p class="hero-subtitle">Instant extraction without any API setup.</p>
+
+      <div class="card">
+        <div class="upload-icon-wrapper">
+          <svg fill="none" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 10.5L12 3m0 0l7.5 7.5M12 3v18" /></svg>
+        </div>
+        <div class="upload-title">Upload PDF File</div>
+        <div class="upload-sub" id="fileStatus">Drag & drop or choose a file</div>
+        <button class="btn-choose" onclick="document.getElementById('fileInput').click()">Choose File</button>
+        <input type="file" id="fileInput" accept=".pdf,.txt" style="display: none;" onchange="handleFileSelect(event)">
+      </div>
+    </div>
+
+    <div id="step2" style="display: none;">
+      <div class="card">
+        <div class="step-2-title">Select Mode</div>
+        
+        <div class="options-list">
+          <div class="option-item active" onclick="selectOption(this, 'short_notes')">
+            <div class="opt-icon">📝</div>
+            <div><strong>Short Notes</strong><br><span style="color:var(--text-sub); font-size:0.8rem">Key sentences & points</span></div>
+          </div>
+          <div class="option-item" onclick="selectOption(this, 'formula_sheet')">
+            <div class="opt-icon">Σ</div>
+            <div><strong>Formula & Terms</strong><br><span style="color:var(--text-sub); font-size:0.8rem">Math/Science definitions</span></div>
+          </div>
+        </div>
+
+        <button class="btn-generate" id="genBtn" onclick="generateNotesJS()">Generate Notes Fast ⚡</button>
+      </div>
+    </div>
+
+    <div class="sheet-preview" id="previewContainer">
+      <div id="pdfContent" class="handwritten-sheet"></div>
+      <button class="btn-generate" style="margin-top: 15px; background-color: #22c55e; color: #fff;" onclick="downloadPDF()">Download PDF 📥</button>
+    </div>
+
+  </div>
+
+  <script>
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+
+    let pdfTextData = "";
+    let selectedType = 'short_notes';
+
+    function handleFileSelect(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      document.getElementById('fileStatus').innerText = "Loaded: " + file.name;
+
+      if (file.type === "application/pdf") {
+        const reader = new FileReader();
+        reader.onload = async function () {
+          try {
+            const typedarray = new Uint8Array(this.result);
+            const pdf = await pdfjsLib.getDocument(typedarray).promise;
+            let fullText = "";
+
+            for (let i = 1; i <= Math.min(pdf.numPages, 10); i++) {
+              const page = await pdf.getPage(i);
+              const textContent = await page.getTextContent();
+              fullText += textContent.items.map(item => item.str).join(" ") + "\n";
+            }
+            pdfTextData = fullText.trim();
+            showStep2();
+          } catch(err) {
+            alert("PDF read karne me issue aaya!");
+          }
+        };
+        reader.readAsArrayBuffer(file);
+      } else {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          pdfTextData = evt.target.result;
+          showStep2();
+        };
+        reader.readAsText(file);
+      }
+    }
+
+    function showStep2() {
+      document.getElementById('step1').style.display = 'none';
+      document.getElementById('step2').style.display = 'block';
+    }
+
+    function selectOption(el, type) {
+      document.querySelectorAll('.option-item').forEach(item => item.classList.remove('active'));
+      el.classList.add('active');
+      selectedType = type;
+    }
+
+    // PURE JS SMART EXTRACTOR (ZERO API)
+    function generateNotesJS() {
+      if (!pdfTextData) {
+        alert("Pehle file load hone dein!");
+        return;
+      }
+
+      const sentences = pdfTextData.split(/(?<=[.?!])\s+/);
+      
+      let htmlOutput = "<h2>Revision Summary Sheet</h2>";
+      
+      if (selectedType === 'short_notes') {
+        htmlOutput += "<p><b>Key Highlighting Points:</b></p><ul>";
+        
+        let count = 0;
+        sentences.forEach(s => {
+          let clean = s.trim();
+          // Pick sentences that look informative
+          if (clean.length > 30 && clean.length < 180 && count < 8) {
+            htmlOutput += `<li>${clean}</li>`;
+            count++;
+          }
+        });
+        htmlOutput += "</ul>";
+
+      } else {
+        htmlOutput += "<p><b>Extracted Formulas & Key Definitions:</b></p>";
+        let formulaFound = false;
+
+        sentences.forEach(s => {
+          if (s.includes("=") || s.includes(":") || s.toLowerCase().includes("formula") || s.toLowerCase().includes("defined as")) {
+            if (s.length < 150) {
+              htmlOutput += `<div class='formula-box'>${s.trim()}</div>`;
+              formulaFound = true;
+            }
+          }
+        });
+
+        if (!formulaFound) {
+          htmlOutput += `<div class='formula-box'>${sentences[0] || 'No specific formula detected.'}</div>`;
+        }
+      }
+
+      document.getElementById('pdfContent').innerHTML = htmlOutput;
+      document.getElementById('previewContainer').style.display = 'block';
+    }
+
+    function downloadPDF() {
+      const element = document.getElementById('pdfContent');
+      html2pdf().set({
+        margin: 0.5,
+        filename: 'study_notes.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+      }).from(element).save();
+    }
+  </script>
+</body>
+  </html>
