@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NoteNest AI</title>
+  <title>NoteNest AI (Gemini Powered)</title>
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -35,7 +35,7 @@
     header {
       width: 100%; max-width: 450px;
       display: flex; justify-content: space-between; align-items: center;
-      padding: 10px 0 30px 0;
+      padding: 10px 0 20px 0;
     }
 
     .logo { font-size: 1.6rem; font-weight: 800; display: flex; align-items: center; gap: 8px; }
@@ -45,9 +45,19 @@
 
     .hero-title { font-size: 2.2rem; font-weight: 800; text-align: center; margin-bottom: 16px; }
     .hero-title span { color: var(--yellow); }
-    .hero-subtitle { text-align: center; color: var(--text-sub); font-size: 0.95rem; margin-bottom: 30px; }
+    .hero-subtitle { text-align: center; color: var(--text-sub); font-size: 0.95rem; margin-bottom: 24px; }
 
-    .card { background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 24px; padding: 32px 20px; text-align: center; }
+    .card { background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 24px; padding: 24px 20px; text-align: center; }
+
+    .key-input-box {
+      margin-bottom: 20px;
+      text-align: left;
+    }
+    .key-input-box label { font-size: 0.8rem; color: var(--text-sub); display: block; margin-bottom: 6px; }
+    .key-input-box input {
+      width: 100%; padding: 12px; background: #1a1e29; border: 1px solid var(--border-color);
+      border-radius: 10px; color: #fff; font-size: 0.85rem; outline: none;
+    }
 
     .upload-icon-wrapper {
       width: 64px; height: 64px; background-color: var(--icon-bg);
@@ -90,22 +100,27 @@
 <body>
 
   <header>
-    <div class="logo">NoteNest <span class="logo-badge">AI</span></div>
+    <div class="logo">NoteNest <span class="logo-badge">GEMINI 2.5</span></div>
   </header>
 
   <div class="main-container">
     
     <div id="step1">
       <h1 class="hero-title">Turn any PDF into<br><span>smart study<br>notes.</span></h1>
-      <p class="hero-subtitle">Upload your file to generate AI revision notes.</p>
+      <p class="hero-subtitle">Powered directly by Google Gemini AI.</p>
 
       <div class="card">
+        <div class="key-input-box">
+          <label for="geminiKey">Gemini API Key (AI Studio se lein):</label>
+          <input type="password" id="geminiKey" placeholder="AIzaSy..." onchange="saveKey(this.value)">
+        </div>
+
         <div class="upload-icon-wrapper">
           <svg fill="none" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 10.5L12 3m0 0l7.5 7.5M12 3v18" /></svg>
         </div>
-        <div class="upload-title">Upload File</div>
-        <div class="upload-sub" id="fileStatus">PDF or TXT file</div>
-        <button class="btn-choose" onclick="document.getElementById('fileInput').click()">Choose File</button>
+        <div class="upload-title">Upload PDF / File</div>
+        <div class="upload-sub" id="fileStatus">Choose a document</div>
+        <button class="btn-choose" style="margin-top: 10px;" onclick="document.getElementById('fileInput').click()">Choose File</button>
         <input type="file" id="fileInput" accept=".pdf,.txt" style="display: none;" onchange="handleFileSelect(event)">
       </div>
     </div>
@@ -117,15 +132,15 @@
         <div class="options-list">
           <div class="option-item active" onclick="selectOption(this, 'short_notes')">
             <div class="opt-icon">📝</div>
-            <div><strong>Short Notes</strong><br><span style="color:var(--text-sub); font-size:0.8rem">AI Chapter Summary</span></div>
+            <div><strong>Short Notes</strong><br><span style="color:var(--text-sub); font-size:0.8rem">Gemini AI Smart Summary</span></div>
           </div>
           <div class="option-item" onclick="selectOption(this, 'formula_sheet')">
             <div class="opt-icon">Σ</div>
-            <div><strong>Formula & Terms</strong><br><span style="color:var(--text-sub); font-size:0.8rem">Key formulas only</span></div>
+            <div><strong>Formula Sheet</strong><br><span style="color:var(--text-sub); font-size:0.8rem">Key formulas & definitions</span></div>
           </div>
         </div>
 
-        <button class="btn-generate" id="genBtn" onclick="generateAINotes()">Generate AI Notes ✨</button>
+        <button class="btn-generate" id="genBtn" onclick="generateGeminiNotes()">Generate with Gemini AI ✨</button>
       </div>
     </div>
 
@@ -141,6 +156,16 @@
 
     let pdfTextData = "";
     let selectedType = 'short_notes';
+
+    // Auto load saved Gemini API Key
+    window.onload = () => {
+      const savedKey = localStorage.getItem('gemini_api_key');
+      if (savedKey) document.getElementById('geminiKey').value = savedKey;
+    };
+
+    function saveKey(val) {
+      localStorage.setItem('gemini_api_key', val.trim());
+    }
 
     async function handleFileSelect(e) {
       const file = e.target.files[0];
@@ -167,7 +192,7 @@
             status.innerText = "Loaded: " + file.name;
             showStep2();
           } catch(err) {
-            alert("Error reading PDF");
+            alert("PDF reading error!");
           }
         };
         reader.readAsArrayBuffer(file);
@@ -193,35 +218,57 @@
       selectedType = type;
     }
 
-    async function generateAINotes() {
+    async function generateGeminiNotes() {
+      const apiKey = document.getElementById('geminiKey').value.trim() || localStorage.getItem('gemini_api_key');
+
+      if (!apiKey) {
+        alert("Pehle Google AI Studio (aistudio.google.com) se free Gemini API Key daalein!");
+        return;
+      }
+
       const btn = document.getElementById('genBtn');
-      btn.innerText = "AI Summarizing... ⏳";
+      btn.innerText = "Gemini is Thinking... 🧠";
       btn.disabled = true;
 
-      const prompt = selectedType === 'short_notes' 
-        ? `Create clean HTML study notes from this text. Wrap title in <h2>, key points in <ul><li>, and important terms in <b>. Do not include Markdown blocks. Text: ${pdfTextData.substring(0, 3000)}`
-        : `Extract all important formulas/definitions from this text as HTML. Wrap each formula in <div class="formula-box">. Text: ${pdfTextData.substring(0, 3000)}`;
+      const promptText = `You are a helpful study assistant. Generate study notes from the following text in pure HTML format. Do not use Markdown formatting, do not use backticks (\`\`\`html).
+
+Requirements:
+- Main title inside <h2>
+- Important concepts in <ul> and <li> with <b> tags for highlights
+- Put important formulas or definitions inside <div class='formula-box'>
+
+Source Text:
+${pdfTextData.substring(0, 4000)}`;
 
       try {
-        // Free Public LLM Endpoint
-        const res = await fetch("https://text.pollinations.ai/", {
+        // Direct REST API Call to Official Gemini 2.5 Flash Endpoint
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+
+        const response = await fetch(url, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            messages: [{ role: "user", content: prompt }],
-            model: "openai"
+            contents: [{
+              parts: [{ text: promptText }]
+            }]
           })
         });
 
-        let text = await res.text();
-        text = text.replace(/```html|```/g, '').trim();
+        const data = await response.json();
 
-        document.getElementById('pdfContent').innerHTML = text;
-        document.getElementById('previewContainer').style.display = 'block';
-      } catch (err) {
-        alert("AI Service busy, retrying...");
+        if (data.candidates && data.candidates[0].content.parts[0].text) {
+          let rawHtml = data.candidates[0].content.parts[0].text;
+          let cleanHtml = rawHtml.replace(/```html|```/g, '').trim();
+
+          document.getElementById('pdfContent').innerHTML = cleanHtml;
+          document.getElementById('previewContainer').style.display = 'block';
+        } else {
+          alert("Gemini Error: " + (data.error ? data.error.message : "Failed to generate"));
+        }
+      } catch (e) {
+        alert("Connection failed! Check your internet or API Key.");
       } finally {
-        btn.innerText = "Generate AI Notes ✨";
+        btn.innerText = "Generate with Gemini AI ✨";
         btn.disabled = false;
       }
     }
@@ -230,7 +277,7 @@
       const element = document.getElementById('pdfContent');
       html2pdf().set({
         margin: 0.5,
-        filename: 'study_notes.pdf',
+        filename: 'gemini_study_notes.pdf',
         image: { type: 'jpeg', quality: 0.98 },
         html2canvas: { scale: 2 },
         jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
