@@ -97,14 +97,14 @@
     
     <div id="step1">
       <h1 class="hero-title">Turn any PDF into<br><span>smart study<br>notes.</span></h1>
-      <p class="hero-subtitle">Instant extraction without any API setup.</p>
+      <p class="hero-subtitle">Upload your file to generate instant revision notes.</p>
 
       <div class="card">
         <div class="upload-icon-wrapper">
           <svg fill="none" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 10.5L12 3m0 0l7.5 7.5M12 3v18" /></svg>
         </div>
-        <div class="upload-title">Upload PDF File</div>
-        <div class="upload-sub" id="fileStatus">Drag & drop or choose a file</div>
+        <div class="upload-title">Upload File</div>
+        <div class="upload-sub" id="fileStatus">PDF or TXT file</div>
         <button class="btn-choose" onclick="document.getElementById('fileInput').click()">Choose File</button>
         <input type="file" id="fileInput" accept=".pdf,.txt" style="display: none;" onchange="handleFileSelect(event)">
       </div>
@@ -117,11 +117,11 @@
         <div class="options-list">
           <div class="option-item active" onclick="selectOption(this, 'short_notes')">
             <div class="opt-icon">📝</div>
-            <div><strong>Short Notes</strong><br><span style="color:var(--text-sub); font-size:0.8rem">Key sentences & points</span></div>
+            <div><strong>Short Notes</strong><br><span style="color:var(--text-sub); font-size:0.8rem">Key points & summary</span></div>
           </div>
           <div class="option-item" onclick="selectOption(this, 'formula_sheet')">
             <div class="opt-icon">Σ</div>
-            <div><strong>Formula & Terms</strong><br><span style="color:var(--text-sub); font-size:0.8rem">Math/Science definitions</span></div>
+            <div><strong>Formula & Terms</strong><br><span style="color:var(--text-sub); font-size:0.8rem">Important formulas</span></div>
           </div>
         </div>
 
@@ -142,11 +142,12 @@
     let pdfTextData = "";
     let selectedType = 'short_notes';
 
-    function handleFileSelect(e) {
+    async function handleFileSelect(e) {
       const file = e.target.files[0];
       if (!file) return;
 
-      document.getElementById('fileStatus').innerText = "Loaded: " + file.name;
+      const status = document.getElementById('fileStatus');
+      status.innerText = "Reading file... ⏳";
 
       if (file.type === "application/pdf") {
         const reader = new FileReader();
@@ -156,22 +157,33 @@
             const pdf = await pdfjsLib.getDocument(typedarray).promise;
             let fullText = "";
 
-            for (let i = 1; i <= Math.min(pdf.numPages, 10); i++) {
+            for (let i = 1; i <= Math.min(pdf.numPages, 15); i++) {
               const page = await pdf.getPage(i);
               const textContent = await page.getTextContent();
               fullText += textContent.items.map(item => item.str).join(" ") + "\n";
             }
+            
             pdfTextData = fullText.trim();
+            
+            if (!pdfTextData) {
+              alert("PDF se text read nahi ho paya. Kripya doosri file try karein!");
+              status.innerText = "PDF read failed";
+              return;
+            }
+
+            status.innerText = "Loaded: " + file.name;
             showStep2();
           } catch(err) {
-            alert("PDF read karne me issue aaya!");
+            alert("PDF read error! Try uploading a text file or another PDF.");
+            status.innerText = "Error reading file";
           }
         };
         reader.readAsArrayBuffer(file);
       } else {
         const reader = new FileReader();
         reader.onload = function(evt) {
-          pdfTextData = evt.target.result;
+          pdfTextData = evt.target.result.trim();
+          status.innerText = "Loaded: " + file.name;
           showStep2();
         };
         reader.readAsText(file);
@@ -189,14 +201,14 @@
       selectedType = type;
     }
 
-    // PURE JS SMART EXTRACTOR (ZERO API)
     function generateNotesJS() {
-      if (!pdfTextData) {
-        alert("Pehle file load hone dein!");
+      if (!pdfTextData || pdfTextData.length < 5) {
+        alert("File data load nahi hua! Please file dobara upload karein.");
         return;
       }
 
-      const sentences = pdfTextData.split(/(?<=[.?!])\s+/);
+      // Sentence separator logic
+      const sentences = pdfTextData.split(/(?<=[.?!])\s+/).filter(s => s.trim().length > 15);
       
       let htmlOutput = "<h2>Revision Summary Sheet</h2>";
       
@@ -204,31 +216,34 @@
         htmlOutput += "<p><b>Key Highlighting Points:</b></p><ul>";
         
         let count = 0;
-        sentences.forEach(s => {
+        for (let s of sentences) {
           let clean = s.trim();
-          // Pick sentences that look informative
-          if (clean.length > 30 && clean.length < 180 && count < 8) {
+          if (clean.length > 25 && count < 10) {
             htmlOutput += `<li>${clean}</li>`;
             count++;
           }
-        });
+        }
         htmlOutput += "</ul>";
 
       } else {
-        htmlOutput += "<p><b>Extracted Formulas & Key Definitions:</b></p>";
+        htmlOutput += "<p><b>Extracted Formulas & Important Terms:</b></p>";
         let formulaFound = false;
 
-        sentences.forEach(s => {
-          if (s.includes("=") || s.includes(":") || s.toLowerCase().includes("formula") || s.toLowerCase().includes("defined as")) {
-            if (s.length < 150) {
-              htmlOutput += `<div class='formula-box'>${s.trim()}</div>`;
+        for (let s of sentences) {
+          let clean = s.trim();
+          if (clean.includes("=") || clean.includes(":") || clean.toLowerCase().includes("formula") || clean.toLowerCase().includes("is defined as")) {
+            if (clean.length < 200) {
+              htmlOutput += `<div class='formula-box'>${clean}</div>`;
               formulaFound = true;
             }
           }
-        });
+        }
 
         if (!formulaFound) {
-          htmlOutput += `<div class='formula-box'>${sentences[0] || 'No specific formula detected.'}</div>`;
+          // Fallback if no specific math symbols found
+          for (let i = 0; i < Math.min(3, sentences.length); i++) {
+            htmlOutput += `<div class='formula-box'>${sentences[i].trim()}</div>`;
+          }
         }
       }
 
@@ -248,4 +263,4 @@
     }
   </script>
 </body>
-  </html>
+</html>
