@@ -90,14 +90,14 @@
 <body>
 
   <header>
-    <div class="logo">NoteNest <span class="logo-badge">FAST</span></div>
+    <div class="logo">NoteNest <span class="logo-badge">AI</span></div>
   </header>
 
   <div class="main-container">
     
     <div id="step1">
       <h1 class="hero-title">Turn any PDF into<br><span>smart study<br>notes.</span></h1>
-      <p class="hero-subtitle">Upload your file to generate instant revision notes.</p>
+      <p class="hero-subtitle">Upload your file to generate AI revision notes.</p>
 
       <div class="card">
         <div class="upload-icon-wrapper">
@@ -117,15 +117,15 @@
         <div class="options-list">
           <div class="option-item active" onclick="selectOption(this, 'short_notes')">
             <div class="opt-icon">📝</div>
-            <div><strong>Short Notes</strong><br><span style="color:var(--text-sub); font-size:0.8rem">Key points & summary</span></div>
+            <div><strong>Short Notes</strong><br><span style="color:var(--text-sub); font-size:0.8rem">AI Chapter Summary</span></div>
           </div>
           <div class="option-item" onclick="selectOption(this, 'formula_sheet')">
             <div class="opt-icon">Σ</div>
-            <div><strong>Formula & Terms</strong><br><span style="color:var(--text-sub); font-size:0.8rem">Important formulas</span></div>
+            <div><strong>Formula & Terms</strong><br><span style="color:var(--text-sub); font-size:0.8rem">Key formulas only</span></div>
           </div>
         </div>
 
-        <button class="btn-generate" id="genBtn" onclick="generateNotesJS()">Generate Notes Fast ⚡</button>
+        <button class="btn-generate" id="genBtn" onclick="generateAINotes()">Generate AI Notes ✨</button>
       </div>
     </div>
 
@@ -157,25 +157,17 @@
             const pdf = await pdfjsLib.getDocument(typedarray).promise;
             let fullText = "";
 
-            for (let i = 1; i <= Math.min(pdf.numPages, 15); i++) {
+            for (let i = 1; i <= Math.min(pdf.numPages, 10); i++) {
               const page = await pdf.getPage(i);
               const textContent = await page.getTextContent();
               fullText += textContent.items.map(item => item.str).join(" ") + "\n";
             }
             
             pdfTextData = fullText.trim();
-            
-            if (!pdfTextData) {
-              alert("PDF se text read nahi ho paya. Kripya doosri file try karein!");
-              status.innerText = "PDF read failed";
-              return;
-            }
-
             status.innerText = "Loaded: " + file.name;
             showStep2();
           } catch(err) {
-            alert("PDF read error! Try uploading a text file or another PDF.");
-            status.innerText = "Error reading file";
+            alert("Error reading PDF");
           }
         };
         reader.readAsArrayBuffer(file);
@@ -201,54 +193,37 @@
       selectedType = type;
     }
 
-    function generateNotesJS() {
-      if (!pdfTextData || pdfTextData.length < 5) {
-        alert("File data load nahi hua! Please file dobara upload karein.");
-        return;
+    async function generateAINotes() {
+      const btn = document.getElementById('genBtn');
+      btn.innerText = "AI Summarizing... ⏳";
+      btn.disabled = true;
+
+      const prompt = selectedType === 'short_notes' 
+        ? `Create clean HTML study notes from this text. Wrap title in <h2>, key points in <ul><li>, and important terms in <b>. Do not include Markdown blocks. Text: ${pdfTextData.substring(0, 3000)}`
+        : `Extract all important formulas/definitions from this text as HTML. Wrap each formula in <div class="formula-box">. Text: ${pdfTextData.substring(0, 3000)}`;
+
+      try {
+        // Free Public LLM Endpoint
+        const res = await fetch("https://text.pollinations.ai/", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            messages: [{ role: "user", content: prompt }],
+            model: "openai"
+          })
+        });
+
+        let text = await res.text();
+        text = text.replace(/```html|```/g, '').trim();
+
+        document.getElementById('pdfContent').innerHTML = text;
+        document.getElementById('previewContainer').style.display = 'block';
+      } catch (err) {
+        alert("AI Service busy, retrying...");
+      } finally {
+        btn.innerText = "Generate AI Notes ✨";
+        btn.disabled = false;
       }
-
-      // Sentence separator logic
-      const sentences = pdfTextData.split(/(?<=[.?!])\s+/).filter(s => s.trim().length > 15);
-      
-      let htmlOutput = "<h2>Revision Summary Sheet</h2>";
-      
-      if (selectedType === 'short_notes') {
-        htmlOutput += "<p><b>Key Highlighting Points:</b></p><ul>";
-        
-        let count = 0;
-        for (let s of sentences) {
-          let clean = s.trim();
-          if (clean.length > 25 && count < 10) {
-            htmlOutput += `<li>${clean}</li>`;
-            count++;
-          }
-        }
-        htmlOutput += "</ul>";
-
-      } else {
-        htmlOutput += "<p><b>Extracted Formulas & Important Terms:</b></p>";
-        let formulaFound = false;
-
-        for (let s of sentences) {
-          let clean = s.trim();
-          if (clean.includes("=") || clean.includes(":") || clean.toLowerCase().includes("formula") || clean.toLowerCase().includes("is defined as")) {
-            if (clean.length < 200) {
-              htmlOutput += `<div class='formula-box'>${clean}</div>`;
-              formulaFound = true;
-            }
-          }
-        }
-
-        if (!formulaFound) {
-          // Fallback if no specific math symbols found
-          for (let i = 0; i < Math.min(3, sentences.length); i++) {
-            htmlOutput += `<div class='formula-box'>${sentences[i].trim()}</div>`;
-          }
-        }
-      }
-
-      document.getElementById('pdfContent').innerHTML = htmlOutput;
-      document.getElementById('previewContainer').style.display = 'block';
     }
 
     function downloadPDF() {
