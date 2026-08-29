@@ -2,68 +2,105 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#16372d">
 <title>Tejaswi — Herbals & Organics</title>
-<meta name="description" content="Premium herbal and organic products by Tejaswi.">
+<meta name="description" content="Tejaswi Herbals & Organics — premium everyday wellness essentials inspired by Indian traditions.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="announcement">FREE SHIPPING ON ORDERS ABOVE ₹499 &nbsp; • &nbsp; MADE WITH NATURE, MADE FOR YOU</div>
-<nav class="nav">
-  <a class="logo" href="#">tejaswi<small>HERBALS & ORGANICS</small></a>
-  <div class="navlinks"><a href="#shop">Shop</a><a href="#story">Our Story</a><a href="#reviews">Reviews</a><a href="#contact">Contact</a></div>
-  <div class="actions">
-    <button class="icon" aria-label="Search" onclick="document.getElementById('shop').scrollIntoView()">⌕</button>
-    <button class="icon cart" aria-label="Cart" onclick="toggleCart()">🛒<span class="badge" id="count">0</span></button>
-    <button class="icon hamb" aria-label="Menu" onclick="toggleMenu()">☰</button>
-  </div>
-</nav>
-<div class="menu" id="menu"><a href="#shop" onclick="toggleMenu()">Shop all</a><a href="#story" onclick="toggleMenu()">Our story</a><a href="#reviews" onclick="toggleMenu()">Reviews</a><a href="#contact" onclick="toggleMenu()">Contact</a></div>
+<div class="announcement"><span>Complimentary shipping on orders above ₹499</span><span class="announcement-dot">•</span><span>Made in India · Crafted with care</span></div>
 
-<section class="hero">
-  <div class="hero-copy">
-    <div class="eyebrow">Pure • Traditional • Thoughtfully Made</div>
-    <h1>Good food heals.<br><em>Herbs restore.</em></h1>
-    <p>Discover premium herbal and organic essentials inspired by traditional wisdom and crafted for modern everyday wellness.</p>
-    <div class="btns"><a class="btn primary" href="#shop">Shop collection →</a><a class="btn secondary" href="#story">Discover Tejaswi</a></div>
+<header class="site-header">
+  <nav class="nav container">
+    <button class="mobile-menu-btn" aria-label="Open menu" onclick="toggleMenu()"><span></span><span></span><span></span></button>
+    <a class="logo" href="#top" aria-label="Tejaswi home"><span>tejaswi</span><small>HERBALS &amp; ORGANICS</small></a>
+    <div class="navlinks">
+      <a class="active" href="#top">Home</a><a href="#shop">Shop</a><a href="#story">Our Story</a><a href="#reviews">Reviews</a><a href="#contact">Contact</a>
+    </div>
+    <div class="actions">
+      <button class="icon-btn search-btn" aria-label="Search" onclick="focusSearch()">⌕</button>
+      <button class="icon-btn" aria-label="Account" onclick="alert('Account page coming soon.')">♙</button>
+      <button class="icon-btn cart-btn" aria-label="Cart" onclick="toggleCart(true)">Bag <span class="badge" id="count">0</span></button>
+    </div>
+  </nav>
+  <div class="mobile-menu" id="menu">
+    <a href="#top" onclick="toggleMenu()">Home</a><a href="#shop" onclick="toggleMenu()">Shop all</a><a href="#story" onclick="toggleMenu()">Our story</a><a href="#reviews" onclick="toggleMenu()">Reviews</a><a href="#contact" onclick="toggleMenu()">Contact</a>
   </div>
-  <div class="hero-art"></div>
+</header>
+
+<main id="top">
+<section class="hero">
+  <div class="hero-image"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content container">
+    <div class="hero-copy">
+      <div class="eyebrow light">THE TEJASWI EDIT · 2026</div>
+      <h1>Good food heals.<br><em>Herbs restore.</em></h1>
+      <p>Thoughtfully made everyday essentials, rooted in Indian tradition and designed for a modern ritual.</p>
+      <div class="hero-actions"><a class="btn btn-light" href="#shop">Shop collection <span>↗</span></a><a class="text-link light-link" href="#story">Discover our story <span>→</span></a></div>
+    </div>
+    <div class="hero-note"><span>01</span><i></i><span>Tradition · Purity · Wellness</span></div>
+  </div>
 </section>
 
-<div class="trust">
-  <div><b>100% Natural</b><span>Thoughtfully sourced</span></div>
-  <div><b>Small-Batch</b><span>Freshly prepared</span></div>
-  <div><b>Clean Ingredients</b><span>No unnecessary extras</span></div>
-  <div><b>Made in India</b><span>Rooted in tradition</span></div>
-</div>
+<section class="marquee"><div>PURE INGREDIENTS <span>✦</span> TIME-HONOURED RECIPES <span>✦</span> MODERN WELLNESS <span>✦</span> MADE IN INDIA <span>✦</span></div></section>
 
-<section class="section" id="shop">
-  <div class="section-head"><div><div class="eyebrow">The collection</div><h2>Shop our favourites</h2></div><p>Simple, honest ingredients for your daily rituals.</p></div>
+<section class="intro container">
+  <div class="intro-kicker">A BETTER DAILY RITUAL</div>
+  <div><h2>Simple ingredients.<br><em>Exceptional intent.</em></h2><p>From roasted gram flour to calming herbal infusions, Tejaswi brings familiar Indian goodness to your shelf with a considered, premium touch.</p><a class="under-link" href="#shop">Explore the collection <span>→</span></a></div>
+</section>
+
+<section class="shop-section container" id="shop">
+  <div class="section-head">
+    <div><div class="eyebrow">CURATED FOR YOU</div><h2>Our favourites</h2></div>
+    <div class="shop-tools"><div class="search-wrap"><span>⌕</span><input id="productSearch" type="search" placeholder="Search products..." oninput="filterProducts(this.value)"></div><button class="filter-btn" onclick="sortProducts()">Sort <span>↕</span></button></div>
+  </div>
+  <div class="category-row"><button class="category active" onclick="filterCategory('all',this)">All</button><button class="category" onclick="filterCategory('sattu',this)">Sattu</button><button class="category" onclick="filterCategory('tea',this)">Herbal Tea</button><button class="category" onclick="filterCategory('snacks',this)">Healthy Snacks</button></div>
   <div class="products" id="products"></div>
+  <div class="shop-bottom"><a class="btn btn-dark-outline" href="#shop">View all products <span>↗</span></a></div>
+</section>
+
+<section class="benefits">
+  <div class="container benefits-grid">
+    <div class="benefit"><div class="benefit-icon">✦</div><div><strong>Thoughtfully sourced</strong><p>Ingredients selected with care.</p></div></div>
+    <div class="benefit"><div class="benefit-icon">◌</div><div><strong>Small-batch freshness</strong><p>Made to preserve everyday goodness.</p></div></div>
+    <div class="benefit"><div class="benefit-icon">✓</div><div><strong>Clean &amp; honest</strong><p>Simple products, clear intentions.</p></div></div>
+    <div class="benefit"><div class="benefit-icon">⌁</div><div><strong>Rooted in India</strong><p>Inspired by our food traditions.</p></div></div>
+  </div>
 </section>
 
 <section class="story" id="story">
-  <div class="story-img"></div>
-  <div class="story-copy"><div class="eyebrow" style="color:#9bc4ad">Our philosophy</div><h2>Ancient wisdom.<br>Modern ritual.</h2><p>Tejaswi brings together familiar Indian ingredients and herbal traditions with a clean, premium approach. Every product is made to feel as good on your shelf as it does in your daily routine.</p><a class="btn secondary" href="#contact" style="width:max-content">Our story →</a></div>
-</section>
-
-<section class="section cream" id="reviews">
-  <div class="reviews">
-    <div><div class="eyebrow">Loved by our community</div><h2 style="font-family:'Playfair Display';font-size:46px;line-height:1.1">Made for everyday moments of <em>wellness.</em></h2><p style="color:var(--muted);margin-top:18px">Real feedback from people who made Tejaswi part of their routine.</p></div>
-    <div class="quote"><div class="stars">★★★★★</div><p>“The Pranika tea has become my favourite evening ritual. The flavour feels fresh, soothing and beautifully balanced.”</p><b>— Priya S.</b></div>
+  <div class="story-image"></div>
+  <div class="story-content">
+    <div class="eyebrow light">OUR PHILOSOPHY</div><h2>Ancient wisdom.<br><em>Modern ritual.</em></h2>
+    <p>Tejaswi celebrates ingredients that have always belonged in Indian kitchens and homes. We pair that familiarity with a refined approach to packaging, flavour and everyday experience.</p>
+    <div class="story-stat"><strong>01</strong><span>Rooted in tradition, made for today.</span></div>
+    <a class="text-link light-link" href="#contact">Learn more <span>→</span></a>
   </div>
 </section>
 
-<section class="newsletter" id="contact"><div class="eyebrow">Stay in the loop</div><h2>Good things, naturally.</h2><p>Get new product drops, offers and wellness notes in your inbox.</p><form class="email" onsubmit="event.preventDefault();alert('Thanks for joining Tejaswi!')"><input type="email" placeholder="Your email address" required><button>Subscribe</button></form></section>
+<section class="editorial container">
+  <div class="editorial-copy"><div class="eyebrow">THE DAILY RITUAL</div><h2>Make room for<br><em>something good.</em></h2><p>Build a pantry that feels as considered as the rest of your home. Discover nourishing staples and herbal blends for slow mornings, busy afternoons and quiet evenings.</p><a class="btn btn-green" href="#shop">Shop wellness essentials <span>↗</span></a></div>
+  <div class="editorial-grid"><div class="mini-card large"><img src="images/sattu.jpg" alt="Tejaswi Sattu"><span>Sattu · Everyday staple</span></div><div class="mini-card"><img src="images/pranika.jpg" alt="Pranika herbal tea"><span>Pranika · Herbal infusion</span></div><div class="mini-card"><img src="images/makhana.jpg" alt="Roasted makhana"><span>Makhana · Better snacking</span></div></div>
+</section>
 
-<footer class="footer"><div class="footergrid"><div><div class="logo" style="color:white">tejaswi<small>HERBALS & ORGANICS</small></div><p style="margin-top:22px;max-width:300px">Pure. Traditional. Organic. A lifestyle of wellness in every product we create.</p></div><div><h3>Shop</h3><a href="#shop">All products</a><a href="#shop">Best sellers</a><a href="#shop">New arrivals</a></div><div><h3>Company</h3><a href="#story">Our story</a><a href="#reviews">Reviews</a><a href="#contact">Contact</a></div><div><h3>Help</h3><a href="#">Shipping & delivery</a><a href="#">Returns</a><a href="#">Privacy</a></div></div><div class="bottom"><span>© 2026 Tejaswi Herbals & Organics</span><span>Made with care in India</span></div></footer>
+<section class="reviews-section" id="reviews">
+  <div class="container reviews-head"><div><div class="eyebrow">THE LOVE NOTE</div><h2>What our customers say</h2></div><div class="review-score"><strong>4.9</strong><span>★★★★★</span><small>Based on everyday love</small></div></div>
+  <div class="container review-track"><article class="review-card"><div class="stars">★★★★★</div><p>“The Pranika tea has become my favourite evening ritual. Fresh, balanced and beautifully packaged.”</p><div class="reviewer"><span>PS</span><div><strong>Priya S.</strong><small>Verified customer</small></div></div></article><article class="review-card muted-card"><div class="stars">★★★★★</div><p>“The sattu tastes incredibly fresh. It has become such an easy pantry staple for us.”</p><div class="reviewer"><span>AK</span><div><strong>Arjun K.</strong><small>Verified customer</small></div></div></article><article class="review-card muted-card"><div class="stars">★★★★★</div><p>“Beautiful presentation and products that actually feel thoughtful from first look to first sip.”</p><div class="reviewer"><span>NM</span><div><strong>Neha M.</strong><small>Verified customer</small></div></div></article></div>
+</section>
 
-<div class="overlay" id="overlay" onclick="toggleCart()"></div>
-<aside class="drawer" id="drawer"><div class="drawerhead"><h2>Your cart</h2><button class="close" onclick="toggleCart()">×</button></div><div class="drawerbody" id="cartbody"><div class="empty">Your cart is empty.<br><small>Add something beautiful to your daily ritual.</small></div></div><div class="total" id="totalbox" style="display:none"><div class="totalrow"><span>Total</span><span id="total">₹0</span></div><button class="add" style="padding:14px" onclick="alert('Checkout demo — connect your payment/order backend here.')">Proceed to checkout</button></div></aside>
+<section class="newsletter" id="contact"><div class="container newsletter-inner"><div><div class="eyebrow light">STAY CONNECTED</div><h2>Good things,<br><em>naturally.</em></h2></div><div><p>New drops, special offers and little wellness notes — occasionally, never noisily.</p><form class="email" onsubmit="subscribe(event)"><input id="email" type="email" placeholder="Your email address" required><button>Join us <span>→</span></button></form><small>By subscribing, you agree to receive Tejaswi updates.</small></div></div></section>
+</main>
 
+<footer class="footer"><div class="container footer-top"><div class="footer-brand"><a class="logo footer-logo" href="#top"><span>tejaswi</span><small>HERBALS &amp; ORGANICS</small></a><p>Pure. Traditional. Thoughtfully made.<br>A lifestyle of wellness in every product.</p><div class="socials"><a href="#" aria-label="Instagram">ig</a><a href="#" aria-label="Facebook">f</a><a href="#" aria-label="Pinterest">p</a></div></div><div class="footer-col"><h3>Shop</h3><a href="#shop">All products</a><a href="#shop">Best sellers</a><a href="#shop">New arrivals</a></div><div class="footer-col"><h3>About</h3><a href="#story">Our story</a><a href="#reviews">Reviews</a><a href="#contact">Contact</a></div><div class="footer-col"><h3>Support</h3><a href="#">Shipping &amp; delivery</a><a href="#">Returns &amp; refunds</a><a href="#">Privacy policy</a></div></div><div class="container footer-bottom"><span>© 2026 Tejaswi Herbals &amp; Organics</span><span>Made with care in India · <a href="#top">Back to top ↑</a></span></div></footer>
+
+<div class="toast" id="toast">Added to your bag</div>
+<div class="overlay" id="overlay" onclick="toggleCart(false)"></div>
+<aside class="drawer" id="drawer"><div class="drawer-head"><div><span class="eyebrow">YOUR SELECTION</span><h2>Your bag</h2></div><button class="close" onclick="toggleCart(false)" aria-label="Close cart">×</button></div><div class="drawer-body" id="cartbody"></div><div class="total" id="totalbox" style="display:none"><div class="total-row"><span>Subtotal</span><strong id="total">₹0</strong></div><p>Taxes and shipping calculated at checkout.</p><button class="checkout" onclick="alert('Checkout demo — connect your payment/order backend here.')">Proceed to checkout <span>→</span></button></div></aside>
 <script src="script.js"></script>
 </body>
 </html>
