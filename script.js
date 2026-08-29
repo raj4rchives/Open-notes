@@ -1,41 +1,15 @@
-const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
-const KEY="jeeStudyOS_v1";
-let data=JSON.parse(localStorage.getItem(KEY)||'{"sessions":[],"todos":[],"backlogs":[],"questions":{"pyq":0,"module":0,"adv":0},"mocks":[],"revisions":[],"chapters":{},"streak":0}');
-const save=()=>{localStorage.setItem(KEY,JSON.stringify(data));renderAll()};
-const today=new Date().toISOString().slice(0,10);
-$("#sessionDate").value=today; $("#revisionDate").value=today;
-$("#todayText").textContent=new Date().toLocaleDateString("en-IN",{day:"2-digit",month:"short"});
-function go(page){$$(".page").forEach(x=>x.classList.remove("active"));$("#"+page)?.classList.add("active");$$(".nav").forEach(x=>x.classList.toggle("active",x.dataset.page===page));$("#pageTitle").textContent=page==="todo"?"Daily Planner":page[0].toUpperCase()+page.slice(1);$("#sidebar").classList.remove("open");window.scrollTo(0,0)}
-$$("[data-page]").forEach(b=>b.addEventListener("click",()=>go(b.dataset.page)));
-$("#menuBtn").onclick=()=>$("#sidebar").classList.toggle("open");
 
-$("#sessionForm").onsubmit=e=>{e.preventDefault();data.sessions.unshift({date:$("#sessionDate").value,subject:$("#sessionSubject").value,hours:+$("#sessionHours").value,topic:$("#sessionTopic").value});e.target.reset();$("#sessionDate").value=today;save()};
-$("#todoForm").onsubmit=e=>{e.preventDefault();data.todos.push({text:$("#todoInput").value,subject:$("#todoSubject").value,done:false});e.target.reset();save()};
-$("#backlogForm").onsubmit=e=>{e.preventDefault();data.backlogs.push({text:$("#backlogInput").value,priority:$("#backlogPriority").value,done:false});e.target.reset();save()};
-$("#questionForm").onsubmit=e=>{e.preventDefault();data.questions[$("#qType").value]+= +$("#qNumber").value;e.target.reset();save()};
-$("#mockForm").onsubmit=e=>{e.preventDefault();data.mocks.unshift({name:$("#mockName").value,score:+$("#mockScore").value,max:+$("#mockMax").value,percentile:$("#mockPercentile").value});e.target.reset();$("#mockMax").value=300;save()};
-$("#revisionForm").onsubmit=e=>{e.preventDefault();data.revisions.push({text:$("#revisionTopic").value,date:$("#revisionDate").value,done:false});e.target.reset();$("#revisionDate").value=today;save()};
-
-function toggle(arr,i){arr[i].done=!arr[i].done;save()}
-function del(arr,i){arr.splice(i,1);save()}
-function renderTodos(){let el=$("#todoList");el.innerHTML=data.todos.length?data.todos.map((t,i)=>`<div class="todo-row ${t.done?"done":""}"><div class="row-left"><input type="checkbox" ${t.done?"checked":""} onchange="toggle(data.todos,${i})"><span>${esc(t.text)}</span><span class="tag">${t.subject}</span></div><button class="ghost" onclick="del(data.todos,${i})">×</button></div>`).join(""):`<p class="muted">No tasks yet. Add your first task above.</p>`}
-function renderBacklog(){let el=$("#backlogList");el.innerHTML=data.backlogs.length?data.backlogs.map((t,i)=>`<div class="todo-row ${t.done?"done":""}"><div class="row-left"><input type="checkbox" ${t.done?"checked":""} onchange="toggle(data.backlogs,${i})"><span>${esc(t.text)}</span><span class="tag ${t.priority.toLowerCase()}">${t.priority}</span></div><button class="ghost" onclick="del(data.backlogs,${i})">×</button></div>`).join(""):`<p class="muted">Backlog empty 🎉</p>`}
-function renderSessions(){let el=$("#sessionList");el.innerHTML=data.sessions.length?data.sessions.slice(0,20).map(s=>`<div class="list-row"><span><b>${esc(s.topic)}</b><small class="muted"> · ${s.subject} · ${s.date}</small></span><b>${s.hours}h</b></div>`).join(""):`<p class="muted">No study logged yet.</p>`}
-function renderQuestions(){["pyq","module","adv"].forEach(k=>$("#"+k).textContent=data.questions[k]);$("#questionCount").textContent=data.questions.pyq+data.questions.module+data.questions.adv}
-function renderRevisions(){let el=$("#revisionList");el.innerHTML=data.revisions.length?data.revisions.map((r,i)=>`<div class="todo-row ${r.done?"done":""}"><div class="row-left"><input type="checkbox" ${r.done?"checked":""} onchange="toggle(data.revisions,${i})"><span>${esc(r.text)}</span><span class="tag">${r.date}</span></div><button class="ghost" onclick="del(data.revisions,${i})">×</button></div>`).join(""):`<p class="muted">No revisions scheduled.</p>`}
-function renderMocks(){let el=$("#mockList");el.innerHTML=data.mocks.length?data.mocks.map(m=>`<div class="list-row"><span><b>${esc(m.name)}</b><small class="muted"> · ${m.score}/${m.max}</small></span><b>${m.percentile?m.percentile+"%ile":Math.round(m.score/m.max*100)+"%"}</b></div>`).join(""):`<p class="muted">No mock tests logged.</p>`}
-function subjectHours(){return ["Physics","Chemistry","Maths"].map(s=>[s,data.sessions.filter(x=>x.subject===s).reduce((a,b)=>a+b.hours,0)])}
-function renderSubjects(target="#subjectBars"){let el=$(target), vals=subjectHours(), max=Math.max(1,...vals.map(x=>x[1]));el.innerHTML=vals.map(([s,h])=>`<div class="subject"><div class="subject-top"><span>${s}</span><b>${h.toFixed(1)}h</b></div><div class="track"><div class="fill" style="width:${h/max*100}%"></div></div></div>`).join("")}
-function renderChart(){let days=[];for(let i=6;i>=0;i--){let d=new Date();d.setDate(d.getDate()-i);let key=d.toISOString().slice(0,10),h=data.sessions.filter(s=>s.date===key).reduce((a,b)=>a+b.hours,0);days.push([d.toLocaleDateString("en-IN",{weekday:"short"}),h])}let max=Math.max(1,...days.map(x=>x[1]));$("#weekChart").innerHTML=days.map(([d,h])=>`<div class="barwrap"><b>${h? h.toFixed(1):""}</b><div class="bar" style="height:${Math.max(4,h/max*125)}px"></div><small>${d}</small></div>`).join("")}
-function renderDashboard(){let todayH=data.sessions.filter(s=>s.date===today).reduce((a,b)=>a+b.hours,0),pct=Math.min(100,todayH/7*100);$("#todayHours").textContent=todayH.toFixed(1);$("#goalText").textContent=`${todayH.toFixed(1)}h / 7h`;$("#goalRing").textContent=Math.round(pct)+"%";$("#goalRing").style.background=`conic-gradient(#9b8be3 ${pct}%, #d9c7f5 0)`;$("#streak").textContent=data.streak||0;$("#backlogOpen").textContent=data.backlogs.filter(x=>!x.done).length+" open";$("#revisionDue").textContent=data.revisions.filter(x=>!x.done&&x.date<=today).length+" due";renderChart();renderSubjects()}
-function renderAnalytics(){let total=data.sessions.reduce((a,b)=>a+b.hours,0), days=new Set(data.sessions.map(s=>s.date)).size, done=data.todos.filter(x=>x.done).length;$("#totalHours").textContent=total.toFixed(1);$("#avgHours").textContent=(days?total/days:0).toFixed(1);$("#completion").textContent=(data.todos.length?Math.round(done/data.todos.length*100):0)+"%";renderSubjects("#analyticsSubjects")}
-const chapters={Physics:["Units & Dimensions","Kinematics","NLM","Work Power Energy","Rotation","COM & Collision","Gravitation","Electrostatics","Current Electricity","Magnetism","EMI & AC","Optics"],Chemistry:["Mole Concept","Atomic Structure","Chemical Bonding","Thermodynamics","Equilibrium","Electrochemistry","Solutions","GOC","Hydrocarbons","Amines","Biomolecules"],Maths:["Quadratic","Sequence & Series","Trigonometry","Straight Lines","Circle","Limits","Differentiation","AOD","Integration","Matrices & Determinants","Vector 3D"]};
-function renderSyllabus(){let el=$("#syllabusCards");el.innerHTML=Object.entries(chapters).map(([s,cs])=>`<div class="card"><h2 class="syllabus-subject">${s}</h2>${cs.map((c,i)=>{let k=s+i,d=!!data.chapters[k];return `<div class="chapter ${d?"done":""}"><span>${c}</span><button onclick="data.chapters['${k}']=!data.chapters['${k}'];save()">${d?"✓":"○"}</button></div>`}).join("")}</div>`).join("")}
-function esc(x){return String(x).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
-function renderAll(){renderTodos();renderBacklog();renderSessions();renderQuestions();renderRevisions();renderMocks();renderDashboard();renderAnalytics();renderSyllabus()}
-let timer=null, seconds=1500;
-function timerDraw(){let m=String(Math.floor(seconds/60)).padStart(2,"0"),s=String(seconds%60).padStart(2,"0");$("#timerDisplay").textContent=`${m}:${s}`}
-$("#timerStart").onclick=()=>{if(timer){clearInterval(timer);timer=null;$("#timerStart").textContent="Start"}else{timer=setInterval(()=>{seconds--;timerDraw();if(seconds<=0){clearInterval(timer);timer=null;alert("Focus session complete! Log it in Study Tracker.");$("#timerStart").textContent="Start"}},1000);$("#timerStart").textContent="Pause"}};
-$("#timerReset").onclick=()=>{clearInterval(timer);timer=null;seconds=1500;timerDraw();$("#timerStart").textContent="Start"};
-$$(".presets button").forEach(b=>b.onclick=()=>{clearInterval(timer);timer=null;seconds=+b.dataset.min*60;timerDraw();$("#timerStart").textContent="Start"});
-renderAll();timerDraw();
+const products=[
+ {name:"Sattu",sub:"High Protein • Gluten-Free • All-Natural",price:347,old:479,img:"images/sattu.jpg",tag:"BEST SELLER"},
+ {name:"Pranika: Breath & Glow Tea",sub:"Caffeine-Free • No Added Sugar",price:349,old:499,img:"images/pranika.jpg",tag:"NEW"},
+ {name:"Masala Sattu",sub:"High Protein • Rich in Fiber",price:179,old:399,img:"images/masala-sattu.jpg",tag:"FAVOURITE"},
+ {name:"Premium Roasted Makhana",sub:"Light • Crunchy • Better Snacking",price:299,old:399,img:"images/makhana.jpg",tag:"POPULAR"}
+];
+let cart=[];
+const productBox=document.getElementById("products");
+productBox.innerHTML=products.map((p,i)=>`<article class="card"><div class="pic"><img src="${p.img}" alt="${p.name}"><span class="tag">${p.tag}</span><button class="heart" onclick="this.textContent=this.textContent==='♡'?'♥':'♡'">♡</button></div><div class="info"><div class="rating">★★★★★ <span style="color:#888">(4.9)</span></div><h3>${p.name}</h3><div class="sub">${p.sub}</div><div class="price"><strong>₹${p.price}</strong><span class="old">₹${p.old}</span></div><button class="add" onclick="addToCart(${i})">Add to cart</button></div></article>`).join("");
+function addToCart(i){cart.push(products[i]);updateCart();toggleCart(true)}
+function updateCart(){document.getElementById("count").textContent=cart.length;const body=document.getElementById("cartbody"),box=document.getElementById("totalbox");if(!cart.length){body.innerHTML='<div class="empty">Your cart is empty.<br><small>Add something beautiful to your daily ritual.</small></div>';box.style.display="none";return}body.innerHTML=cart.map((p,i)=>`<div class="cartitem"><img src="${p.img}"><div style="flex:1"><h4>${p.name}</h4><p>₹${p.price}</p></div><button class="close" style="font-size:18px" onclick="removeItem(${i})">×</button></div>`).join("");document.getElementById("total").textContent="₹"+cart.reduce((s,p)=>s+p.price,0);box.style.display="block"}
+function removeItem(i){cart.splice(i,1);updateCart()}
+function toggleCart(force){const d=document.getElementById("drawer"),o=document.getElementById("overlay");const open=force===true?!d.classList.contains("open"):!d.classList.contains("open");d.classList.toggle("open",open);o.classList.toggle("show",open)}
+function toggleMenu(){document.getElementById("menu").style.display=document.getElementById("menu").style.display==="block"?"none":"block"}
