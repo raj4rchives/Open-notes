@@ -1,23 +1,25 @@
-# JEE Study OS
+# EXAMYWEB Premium Portal
 
-A responsive JEE study dashboard inspired by the uploaded reference screenshots.
+A premium SaaS/client-area style front portal inspired by modern WHMCS/Lagom-style layouts, built around the existing study tracker.
 
-Features:
-- Dashboard with countdown, daily goal, streak, weekly hours and subject split
-- Study session tracker
-- Focus timer
-- Daily todo planner
-- Backlog manager
-- Question practice counter
-- JEE syllabus chapter tracker
-- Mock test history
-- Revision planner
-- Analytics
-- Mentorship UI
-- Study resources UI
-- Data persists in browser localStorage
+## Flow
+Landing → Signup/Login → Plan → UPI/Paytm Checkout → payment verification → tracker.html
 
-## Run
-Open `index.html` directly in a browser, or deploy the folder to Vercel/Netlify/GitHub Pages.
+## UPI
+Configured display/intent UPI ID: `6900365026@superyes`
 
-The current version is frontend-only. Authentication, cloud database, real mentor chat, notifications, and multi-device sync can be added with a backend.
+The UPI button creates a standard `upi://pay` intent. UTR submissions are stored locally as PENDING in this demo. For production, replace this with a backend that verifies payment before granting access.
+
+## Paytm
+The UI contains a Paytm tab/placeholder. Live Paytm requires server-side credentials and transaction verification. Never put a Paytm merchant key in frontend code.
+
+## Existing tracker
+The original tracker is preserved as `tracker.html`, with its `script.js`, `style.css`, and `manifest.json`.
+
+## Production checklist
+- Real authentication backend
+- Database for users/subscriptions
+- UPI/payment-provider verification or webhook
+- Paytm server integration if desired
+- Server-side subscription expiry/access control
+- HTTPS
