@@ -571,8 +571,8 @@ function escapeFeatureText(value) {
 function openFeature(name) {
   const overlay = document.getElementById("featureOverlay");
   const title = document.getElementById("featurePageTitle");
-  const views = ["menu","syllabus","themes","todo","focus","weekly","backup"];
-  const titles = {menu:"Menu",syllabus:"📚 Syllabus Tracker",themes:"🎨 Themes",todo:"📝 Daily TODO",focus:"⏱️ Focus Mode",weekly:"📊 Weekly Report",backup:"💾 Backup & Import"};
+  const views = ["menu","syllabus","pyq","themes","todo","focus","weekly","backup"];
+  const titles = {menu:"Menu",syllabus:"📚 Syllabus Tracker",pyq:"☑️ PYQ Tracker",themes:"🎨 Themes",todo:"📝 Daily TODO",focus:"⏱️ Focus Mode",weekly:"📊 Weekly Report",backup:"💾 Backup & Import"};
   overlay.hidden = false;
   views.forEach(v => {
     const el = document.getElementById(v + "View");
@@ -616,19 +616,19 @@ const THEMES = [
 ];
 
 function applyTheme(theme) {
-  if (!THEMES.includes(theme)) theme = "royal-dark";
+  if (!THEMES.includes(theme)) theme = "lavender";
   document.body.dataset.theme = theme;
   localStorage.setItem(THEME_KEY, theme);
   updateThemeButtons();
 }
 function updateThemeButtons() {
-  const theme = document.body.dataset.theme || "royal-dark";
+  const theme = document.body.dataset.theme || "lavender";
   document.querySelectorAll(".theme-option").forEach(btn => {
     btn.classList.toggle("active", btn.dataset.theme === theme);
   });
 }
 function initThemes() {
-  applyTheme(localStorage.getItem(THEME_KEY) || "royal-dark");
+  applyTheme(localStorage.getItem(THEME_KEY) || "lavender");
   document.querySelectorAll(".theme-option").forEach(btn => {
     btn.addEventListener("click", () => applyTheme(btn.dataset.theme));
   });
@@ -881,6 +881,134 @@ function initWeeklyReport(){
   window.addEventListener("resize",()=>{if(!document.getElementById("weeklyView")?.hidden)renderWeeklyReport();});
 }
 
+/* ---------- PYQ Tracker: chapter-wise 10-question boxes + A4 landscape PDF ---------- */
+const PYQ_KEY = "370R_JEE_PYQ_TRACKER_V1";
+const PYQ_SUBJECTS = ["Physics", "Chemistry", "Mathematics"];
+
+function pyqData(){
+  try{
+    const x=safeJSON(PYQ_KEY,{chapters:[]});
+    const chapters=Array.isArray(x.chapters)?x.chapters:[];
+    return {version:1,chapters:chapters.map(c=>({
+      id:String(c.id||("pyq_"+Date.now()+Math.random().toString(36).slice(2))),
+      subject:PYQ_SUBJECTS.includes(c.subject)?c.subject:"Physics",
+      name:String(c.name||"").trim(),
+      total:Math.max(1,Math.min(500,parseInt(c.total,10)||1))
+    })).filter(c=>c.name)};
+  }catch(e){return {version:1,chapters:[]};}
+}
+function savePyqData(d){localStorage.setItem(PYQ_KEY,JSON.stringify(d));}
+function renderPyq(){
+  const list=document.getElementById("pyqList"); if(!list)return;
+  const d=pyqData(), esc=s=>escapeFeatureText(s);
+  if(!d.chapters.length){list.innerHTML='<div class="sy-empty">No PYQ chapters yet. Add your first chapter above.</div>';return;}
+  list.innerHTML=PYQ_SUBJECTS.map(subject=>{
+    const rows=d.chapters.filter(c=>c.subject===subject); if(!rows.length)return "";
+    return `<section class="sy-subject"><div class="sy-subject-head"><h3>${esc(subject)}</h3><span>${rows.length} chapter${rows.length>1?'s':''}</span></div><div class="sy-simple-table-wrap"><table class="sy-simple-table pyq-simple-table"><thead><tr><th>#</th><th>Chapter Name</th><th>Total PYQs</th><th>Tracking</th><th>REV</th><th>Action</th></tr></thead><tbody>${rows.map((c,i)=>`<tr><td>${i+1}</td><td>${esc(c.name)}</td><td>${c.total}</td><td class="pyq-mini-track">${Math.ceil(c.total/10)} box${Math.ceil(c.total/10)>1?'es':''}</td><td>□</td><td><button class="sy-delete" data-pyq-delete="${esc(c.id)}" type="button">Delete</button></td></tr>`).join("")}</tbody></table></div></section>`;
+  }).join("");
+}
+function addPyqChapter(){
+  const subject=document.getElementById("pyqSubject")?.value;
+  const name=document.getElementById("pyqChapterName")?.value.trim();
+  const total=Number(document.getElementById("pyqTotal")?.value);
+  if(!PYQ_SUBJECTS.includes(subject)||!name||!Number.isInteger(total)||total<1||total>500){alert("Subject, Chapter Name aur Total PYQs (1–500) sahi se bharo.");return;}
+  const d=pyqData();
+  d.chapters.push({id:"pyq_"+Date.now()+"_"+Math.random().toString(36).slice(2),subject,name,total});
+  savePyqData(d);renderPyq();
+  document.getElementById("pyqChapterName").value="";
+  document.getElementById("pyqTotal").value="";
+  document.getElementById("pyqChapterName").focus();
+}
+function initPyq(){
+  document.getElementById("pyqAddBtn")?.addEventListener("click",addPyqChapter);
+  document.getElementById("pyqChapterName")?.addEventListener("keydown",e=>{if(e.key==="Enter")addPyqChapter();});
+  document.getElementById("pyqList")?.addEventListener("click",e=>{
+    const b=e.target.closest("[data-pyq-delete]");if(!b)return;
+    const d=pyqData(),c=d.chapters.find(x=>x.id===b.dataset.pyqDelete);if(!c)return;
+    if(confirm(`Delete “${c.name}”?`)){d.chapters=d.chapters.filter(x=>x.id!==c.id);savePyqData(d);renderPyq();}
+  });
+  document.getElementById("pyqClearBtn")?.addEventListener("click",()=>{
+    if(!pyqData().chapters.length)return;
+    if(confirm("Clear the complete PYQ tracker?")){savePyqData({version:1,chapters:[]});renderPyq();}
+  });
+  document.getElementById("pyqBackBtn")?.addEventListener("click",()=>openFeature("menu"));
+  document.getElementById("pyqPdfBtn")?.addEventListener("click",downloadPyqPDF);
+  renderPyq();
+}
+function downloadPyqPDF(){
+  const JsPDF=window.jspdf?.jsPDF||window.jsPDF;
+  if(!JsPDF){alert("PDF library load nahi hui. Internet on karke page reload karo.");return;}
+  const d=pyqData();
+  if(!d.chapters.length){alert("Pehle PYQ chapters add karo.");return;}
+  const pdf=new JsPDF({orientation:"landscape",unit:"mm",format:"a4",compress:true});
+  const M=8, pageW=297, usable=pageW-M*2, firstPage={value:true};
+  function box(x,y,w,h,label){
+    pdf.setDrawColor(0,0,0);pdf.setLineWidth(0.45);pdf.rect(x,y,w,h);
+    pdf.setFont("helvetica","bold");pdf.setFontSize(6.4);pdf.setTextColor(0,0,0);
+    if(label)pdf.text(label,x+w/2,y+h/2+2.1,{align:"center"});
+  }
+  function drawPage(subject,chapters,startIndex){
+    if(!firstPage.value)pdf.addPage();firstPage.value=false;
+    pdf.setTextColor(0,0,0);pdf.setFont("helvetica","bold");pdf.setFontSize(15);pdf.text("JEE PYQ TRACKER",M,10);
+    pdf.setFont("helvetica","normal");pdf.setFontSize(6.5);pdf.text("Offline Printable • 10 PYQs = 1 tracking box • Tick by hand",M,14);
+    pdf.setFont("helvetica","bold");pdf.setFontSize(10.5);pdf.text(subject.toUpperCase(),M,20);
+
+    const headers=["#","Chapter Name","Total PYQs","PYQ TRACKING (10 QUESTIONS / BOX)","REV"];
+    const widths=[9,66,22,180,20];
+    const rows=chapters.map((c,i)=>[String(startIndex+i+1),c.name,String(c.total),"",""]);
+    pdf.autoTable({
+      startY:23,margin:{left:M,right:M,top:7,bottom:8},tableWidth:usable,
+      head:[headers],body:rows,theme:"grid",rowPageBreak:"avoid",
+      styles:{font:"helvetica",fontSize:7,cellPadding:1.5,overflow:"linebreak",valign:"middle",halign:"center",lineWidth:0.45,lineColor:[0,0,0],textColor:[0,0,0]},
+      headStyles:{fontStyle:"bold",fontSize:6.8,halign:"center",valign:"middle",fillColor:[255,255,255],textColor:[0,0,0],cellPadding:1.5},
+      columnStyles:Object.fromEntries(widths.map((w,i)=>[i,{cellWidth:w,halign:i===1?"left":"center",fontSize:i===1?10:(i===2?8:6.8),fontStyle:i===1||i===2?"bold":"normal"}])),
+      didParseCell:data=>{
+        if(data.section==="body"&&data.column.index===3){
+          const total=chapters[data.row.index].total;
+          const boxes=Math.ceil(total/10), lines=Math.ceil(boxes/5);
+          data.cell.styles.minCellHeight=Math.max(12,lines*10+3);
+        }
+        if(data.section==="body"&&data.column.index===4)data.cell.styles.fontSize=14;
+      },
+      didDrawCell:data=>{
+        if(data.section!=="body")return;
+        const chapter=chapters[data.row.index];
+        if(data.column.index===3){
+          const boxes=Math.ceil(chapter.total/10), perLine=5, bw=30, bh=7.5, gapX=4, gapY=2.5;
+          const totalW=perLine*bw+(perLine-1)*gapX;
+          const startX=data.cell.x+Math.max(2,(data.cell.width-totalW)/2);
+          const startY=data.cell.y+2;
+          for(let b=0;b<boxes;b++){
+            const line=Math.floor(b/perLine),pos=b%perLine;
+            const x=startX+pos*(bw+gapX), y=startY+line*(bh+gapY);
+            if(y+bh>data.cell.y+data.cell.height-0.8)continue;
+            const from=b*10+1,to=Math.min(chapter.total,(b+1)*10);
+            box(x,y,bw,bh,`Q${from}–${to}`);
+          }
+        }
+        if(data.column.index===4){
+          const bw=5,bh=5,x=data.cell.x+(data.cell.width-bw)/2,y=data.cell.y+(data.cell.height-bh)/2;
+          box(x,y,bw,bh,"");
+        }
+      }
+    });
+  }
+  try{
+    const MAX_BODY=245;
+    for(const subject of PYQ_SUBJECTS){
+      const chapters=d.chapters.filter(c=>c.subject===subject);if(!chapters.length)continue;
+      let chunk=[],used=0,startIndex=0;
+      chapters.forEach((c,index)=>{
+        const boxes=Math.ceil(c.total/10),lines=Math.ceil(boxes/5),h=Math.max(12,lines*10+3);
+        if(chunk.length&&used+h>MAX_BODY){drawPage(subject,chunk,startIndex);chunk=[];used=0;startIndex=index;}
+        chunk.push(c);used+=h;
+        if(index===chapters.length-1&&chunk.length)drawPage(subject,chunk,startIndex);
+      });
+    }
+    pdf.save("JEE-PYQ-Tracker-A4-Landscape.pdf");
+  }catch(e){console.error("PYQ PDF generation failed:",e);alert("PYQ PDF generate nahi ho paaya. Data safe hai — chapters delete nahi hue.");}
+}
+
 /* ---------- Syllabus Tracker: configurable chapters + A4 printable sheet ---------- */
 const SYLLABUS_KEY = "370R_JEE_SYLLABUS_V3";
 const SYLLABUS_SUBJECTS = ["Physics", "Chemistry", "Mathematics"];
@@ -941,7 +1069,7 @@ function initSyllabus(){
   document.getElementById("syllabusPdfBtn")?.addEventListener("click",downloadSyllabusPDF);
   renderSyllabus();
 }
-function pdfBox(pdf,x,y,size=3.4){ pdf.setDrawColor(80,80,80); pdf.setLineWidth(0.25); pdf.rect(x,y,size,size); }
+function pdfBox(pdf,x,y,size=3.4){ pdf.setDrawColor(0,0,0); pdf.setLineWidth(0.45); pdf.rect(x,y,size,size); }
 function downloadSyllabusPDF(){
   const JsPDF=window.jspdf?.jsPDF || window.jsPDF;
   if(!JsPDF){alert("PDF library load nahi hui. Internet on karke page reload karo.");return;}
@@ -964,7 +1092,7 @@ function downloadSyllabusPDF(){
 
     pdf.setFont("helvetica","bold");
     pdf.setFontSize(15);
-    pdf.setTextColor(25,25,25);
+    pdf.setTextColor(0,0,0);
     pdf.text("JEE SYLLABUS TRACKER",M,9);
 
     pdf.setFont("helvetica","normal");
@@ -990,12 +1118,12 @@ function downloadSyllabusPDF(){
       rowPageBreak:"avoid",
       styles:{
         font:"helvetica",fontSize:6.4,cellPadding:1.2,overflow:"linebreak",
-        valign:"middle",halign:"center",lineWidth:0.18,
-        lineColor:[145,145,145],textColor:[30,30,30]
+        valign:"middle",halign:"center",lineWidth:0.45,
+        lineColor:[0,0,0],textColor:[0,0,0]
       },
       headStyles:{
         fontStyle:"bold",fontSize:6.2,halign:"center",valign:"middle",
-        fillColor:[235,235,235],textColor:[25,25,25],cellPadding:1.2
+        fillColor:[255,255,255],textColor:[0,0,0],cellPadding:1.2
       },
       columnStyles:Object.fromEntries(
         widths.map((w,i)=>[
@@ -1026,7 +1154,7 @@ function downloadSyllabusPDF(){
             pdfBox(pdf,x,y,box);
             pdf.setFont("helvetica","normal");
             pdf.setFontSize(5.2);
-            pdf.setTextColor(55,55,55);
+            pdf.setTextColor(0,0,0);
             pdf.text(String(n+1),x+5.2,y+3.0);
           }
         }
@@ -1088,6 +1216,7 @@ function downloadSyllabusPDF(){
 document.addEventListener("DOMContentLoaded",()=>{
   initFeatureMenu();
   initSyllabus();
+  initPyq();
   initThemes();
   initTodo();
   initFocus();
