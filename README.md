@@ -1,19 +1,21 @@
-# DevShield — React + Vite
+# PHISH//LAB — Safe Phishing Awareness Simulator
 
-Phone-friendly developer/security workspace designed to be hosted on GitHub Pages.
+A mobile-first cybersecurity UI inspired by retro CRT / terminal dashboards.
+
+## Safety design
+- No credential collection.
+- No password/token transmission.
+- No visitor public-IP collection.
+- IP module uses RFC 5737 documentation addresses only.
+- URL generator creates a local hash-based demo URL.
+- Everything runs client-side.
 
 ## Run
-```bash
-npm install
-npm run dev
-```
+Open `index.html` directly, or deploy the folder to GitHub Pages.
 
-## Build
-```bash
-npm run build
-```
+## Files
+- index.html
+- style.css
+- script.js
 
-## GitHub Pages
-Upload the project to a GitHub repository. If using GitHub Pages with Actions, deploy the generated `dist` folder using a Vite/Node workflow. The app uses no backend and stores snippets, progress and history in browser LocalStorage.
-
-All security utilities are defensive/local: password analysis, SHA-256, URL parsing, JSON formatting, Base64, and regex testing.
+Founder branding: Raj Sharma

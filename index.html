@@ -1,1 +1,147 @@
-<!doctype html><html><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><meta name="theme-color" content="#07111f"/><title>DevShield</title></head><body><div id="root"></div><script type="module" src="/src/main.jsx"></script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PHISH//LAB — Security Awareness Simulator</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="scanline"></div>
+<header class="topbar">
+  <div class="brand"><span class="dot"></span> PHISH//LAB <small>DEMO // AWARENESS SIMULATOR</small></div>
+  <div class="status"><i></i> LOCAL SANDBOX <b id="clock">00:00:00</b></div>
+</header>
+
+<div class="layout">
+<aside class="sidebar">
+  <div class="logo">P/L<span>_</span></div>
+  <button class="nav active" data-tab="dashboard">[01] DASHBOARD</button>
+  <button class="nav" data-tab="builder">[02] DEMO BUILDER</button>
+  <button class="nav" data-tab="url">[03] URL LAB</button>
+  <button class="nav" data-tab="ip">[04] IP SIMULATOR</button>
+  <button class="nav" data-tab="logs">[05] EVENT LOG</button>
+  <div class="side-note">
+    <strong>SAFE MODE</strong>
+    <p>No passwords, tokens, cookies, IPs or form data are collected or transmitted.</p>
+  </div>
+</aside>
+
+<main>
+<section id="dashboard" class="tab active">
+  <div class="eyebrow">SECURITY OPERATIONS / TRAINING</div>
+  <h1>PHISHING <span>SIMULATOR</span></h1>
+  <p class="lead">Build harmless awareness scenarios, inspect suspicious URLs and train against social-engineering patterns.</p>
+  <div class="grid stats">
+    <div class="panel stat"><small>SCENARIOS</small><strong id="scenarioCount">03</strong><span>LOCAL ONLY</span></div>
+    <div class="panel stat"><small>DATA CAPTURE</small><strong>OFF</strong><span>ENFORCED</span></div>
+    <div class="panel stat"><small>NETWORK</small><strong>BLOCKED</strong><span>DEMO MODE</span></div>
+    <div class="panel stat"><small>RISK ENGINE</small><strong>READY</strong><span>CLIENT SIDE</span></div>
+  </div>
+  <div class="grid two">
+    <div class="panel">
+      <div class="panel-title">THREAT FLOW</div>
+      <div class="flow"><span>URL</span><b>→</b><span>SCENARIO</span><b>→</b><span>USER TEST</span><b>→</b><span>EDUCATION</span></div>
+      <p class="muted">The simulator stops at the awareness screen. It never forwards credentials to a server.</p>
+    </div>
+    <div class="panel">
+      <div class="panel-title">QUICK START</div>
+      <button class="big-btn" data-go="builder">OPEN DEMO BUILDER <b>↗</b></button>
+      <button class="ghost" data-go="url">OPEN URL LAB <b>↗</b></button>
+    </div>
+  </div>
+</section>
+
+<section id="builder" class="tab">
+  <div class="eyebrow">MODULE 02 / CONTROLLED SCENARIO</div>
+  <h2>DEMO PHISHING PAGE BUILDER</h2>
+  <p class="muted">Creates an educational mock page. It is intentionally branded as a training simulation and does not capture credentials.</p>
+  <div class="grid two">
+    <div class="panel">
+      <div class="panel-title">SCENARIO CONFIG</div>
+      <label>Scenario name<input id="scenarioName" value="Account Verification Drill"></label>
+      <label>Demo organization<input id="orgName" value="Example Security Lab"></label>
+      <label>Message<textarea id="scenarioMsg">Your account needs a security review. This is a simulated awareness exercise.</textarea></label>
+      <label>Theme
+        <select id="theme">
+          <option value="terminal">Terminal Green</option>
+          <option value="amber">Amber CRT</option>
+          <option value="red">Red Alert</option>
+        </select>
+      </label>
+      <button class="big-btn" id="buildBtn">BUILD SAFE DEMO <b>▶</b></button>
+    </div>
+    <div class="panel">
+      <div class="panel-title">LIVE PREVIEW</div>
+      <div id="preview" class="preview terminal">
+        <div class="preview-head">SECURITY NOTICE // TRAINING</div>
+        <h3>Example Security Lab</h3>
+        <p>Your account needs a security review. This is a simulated awareness exercise.</p>
+        <input placeholder="Demo username" autocomplete="off">
+        <input type="password" placeholder="Demo password" autocomplete="off">
+        <button id="demoSubmit">CONTINUE</button>
+        <div class="training-banner">⚠ TRAINING SIMULATION — NOTHING IS SENT OR SAVED</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="url" class="tab">
+  <div class="eyebrow">MODULE 03 / URL ANALYSIS</div>
+  <h2>SAFE URL LAB</h2>
+  <p class="muted">Generate links that stay inside this simulator, then inspect common phishing indicators.</p>
+  <div class="grid two">
+    <div class="panel">
+      <div class="panel-title">DEMO URL GENERATOR</div>
+      <label>Scenario ID<input id="scenarioId" value="account-review"></label>
+      <label>Test token (non-secret)<input id="demoToken" value="TRAINING-001"></label>
+      <button class="big-btn" id="makeUrl">GENERATE LOCAL DEMO URL</button>
+      <div class="output" id="urlOut">No URL generated.</div>
+      <button class="ghost" id="copyUrl">COPY</button>
+    </div>
+    <div class="panel">
+      <div class="panel-title">PHISHING INDICATOR CHECKER</div>
+      <label>URL<input id="checkUrl" placeholder="https://example.com/login?next=..."></label>
+      <button class="big-btn" id="analyzeUrl">ANALYZE</button>
+      <div id="urlResults" class="results"></div>
+    </div>
+  </div>
+</section>
+
+<section id="ip" class="tab">
+  <div class="eyebrow">MODULE 04 / NETWORK AWARENESS</div>
+  <h2>IP ADDRESS SIMULATOR</h2>
+  <p class="muted">Real visitor-IP collection is disabled. This module uses documentation-only addresses for testing UI and reports.</p>
+  <div class="grid two">
+    <div class="panel center">
+      <div class="ipbox" id="fakeIp">192.0.2.42</div>
+      <button class="big-btn" id="newIp">GENERATE TEST IP</button>
+      <small class="muted">RFC 5737 documentation range</small>
+    </div>
+    <div class="panel">
+      <div class="panel-title">WHY THIS MATTERS</div>
+      <ul class="checks">
+        <li>Public IP collection is not enabled in this demo.</li>
+        <li>No geolocation lookup is performed.</li>
+        <li>No fingerprinting or tracking is performed.</li>
+        <li>Use this panel only to test defensive UI/reporting.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="logs" class="tab">
+  <div class="eyebrow">MODULE 05 / LOCAL TELEMETRY</div>
+  <h2>EVENT LOG</h2>
+  <div class="panel">
+    <div class="logbar"><span>TIME</span><span>EVENT</span><span>STATUS</span></div>
+    <div id="logsList"></div>
+    <button class="ghost" id="clearLogs">CLEAR LOCAL LOG</button>
+  </div>
+</section>
+</main>
+</div>
+<footer>PHISH//LAB • DEFENSIVE SECURITY TRAINING • FOUNDER: RAJ SHARMA • NO CREDENTIAL COLLECTION</footer>
+<script src="script.js"></script>
+</body>
+</html>
