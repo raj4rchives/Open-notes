@@ -1,203 +1,39 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<meta name="theme-color" content="#0b1224">
-<title>PYQX — PYQ & Question Practice</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BoostPanel — SMM Dashboard Demo</title>
 <style>
-:root{
-  --bg:#0b1224;--panel:#111a31;--panel2:#17213a;--line:#25304b;
-  --text:#f4f7ff;--muted:#8793ad;--blue:#36a5ff;--blue2:#2579ff;
-  --purple:#a875ff;--green:#35d98b;--red:#ff6379;--yellow:#ffc857;
-  --shadow:0 18px 45px rgba(0,0,0,.28);--r:22px;
-}
-*{box-sizing:border-box} html{scroll-behavior:smooth}
-body{margin:0;background:linear-gradient(180deg,#091122 0%,#0d1528 60%,#0a1121 100%);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif}
-button,input,select{font:inherit}button{cursor:pointer}
-.app{max-width:1180px;margin:auto;min-height:100vh}
-.topbar{height:76px;display:flex;align-items:center;justify-content:space-between;padding:12px 20px;position:sticky;top:0;z-index:20;background:rgba(9,17,34,.88);backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,.05)}
-.brand{display:flex;align-items:center;gap:11px;font-weight:900;font-size:22px}.logo{width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,#2ea9ff,#7b42ff);display:grid;place-items:center;box-shadow:0 8px 22px #2679ff44}
-.top-actions{display:flex;gap:9px}.icon-btn{border:1px solid var(--line);background:#121b31;color:#cdd7eb;width:43px;height:43px;border-radius:14px}
-.nav{display:flex;gap:8px;padding:8px 20px 0;overflow:auto}.nav button{white-space:nowrap;border:0;background:transparent;color:var(--muted);padding:11px 15px;border-radius:12px;font-weight:800}.nav button.active{background:#172542;color:#fff}
-main{padding:20px}.hero{display:grid;grid-template-columns:1.5fr .8fr;gap:18px;margin-bottom:20px}
-.card{background:linear-gradient(145deg,rgba(22,32,56,.98),rgba(14,23,43,.98));border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow)}
-.hero-card{padding:25px;position:relative;overflow:hidden}.hero-card:after{content:"";position:absolute;width:220px;height:220px;border-radius:50%;background:#6f46ff22;right:-80px;top:-80px;filter:blur(5px)}
-.eyebrow{font-size:12px;letter-spacing:.12em;color:#6fbaff;font-weight:900}.hero h1{font-size:clamp(30px,5vw,48px);line-height:1.02;margin:9px 0}.hero p{color:var(--muted);margin:0 0 19px}.actions{display:flex;gap:10px;flex-wrap:wrap}
-.primary,.secondary{border:0;border-radius:14px;padding:13px 18px;font-weight:900}.primary{color:white;background:linear-gradient(135deg,#289fff,#7352ff);box-shadow:0 10px 25px #4b71ff2c}.secondary{background:#18233c;color:#d9e3f7;border:1px solid #2a3653}
-.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.stat{padding:18px}.stat b{font-size:26px;display:block}.stat span{color:var(--muted);font-size:12px;font-weight:700}
-.section-head{display:flex;align-items:center;justify-content:space-between;margin:25px 2px 12px}.section-head h2{margin:0;font-size:21px}.section-head span{color:var(--muted);font-size:13px}
-.exam-grid,.chapter-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.exam,.chapter{padding:17px;min-height:110px;position:relative;transition:.2s}.exam:hover,.chapter:hover{transform:translateY(-2px);border-color:#3b78b9}.exam .emoji{font-size:25px}.exam h3,.chapter h3{margin:10px 0 3px;font-size:16px}.exam p,.chapter p{margin:0;color:var(--muted);font-size:12px}.badge{position:absolute;right:12px;top:12px;padding:5px 8px;border-radius:8px;background:#173c33;color:#55e09d;font-size:10px;font-weight:900}
-.practice{padding:20px}.filters{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.field label{display:block;color:var(--muted);font-size:11px;font-weight:800;margin:0 0 6px}.field select,.field input{width:100%;padding:12px;border-radius:12px;border:1px solid var(--line);background:#0e172a;color:white;outline:none}.mode-row{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}.mode{padding:9px 13px;border-radius:11px;background:#101a30;border:1px solid var(--line);color:#9ba8bf;font-weight:800}.mode.active{background:#17345a;color:#61b9ff;border-color:#2e79bd}
-.qbox{margin-top:15px;padding:20px;background:#0c1528;border:1px solid #263453;border-radius:18px}.qmeta{display:flex;justify-content:space-between;color:var(--muted);font-size:12px;font-weight:800}.question{font-size:20px;line-height:1.45;margin:17px 0}.options{display:grid;gap:10px}.option{width:100%;text-align:left;padding:14px;border-radius:13px;border:1px solid #293752;background:#121d33;color:#e6ecf7}.option:hover{border-color:#4a87c5}.option.correct{border-color:#35d98b;background:#123328}.option.wrong{border-color:#ff6379;background:#351721}.explain{display:none;margin-top:13px;padding:12px;border-radius:12px;background:#141f36;color:#b7c4d9;font-size:13px}.qfooter{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-top:15px}.timer{font-weight:900;color:#6dbaff}.progress{height:7px;background:#202b43;border-radius:9px;overflow:hidden;margin:10px 0}.progress i{display:block;height:100%;background:linear-gradient(90deg,#2da7ff,#9a62ff);width:0}
-.analytics{display:grid;grid-template-columns:1.3fr .7fr;gap:12px}.chart{padding:20px}.bars{height:150px;display:flex;align-items:end;gap:8px}.bar{flex:1;background:linear-gradient(180deg,#58b6ff,#714dff);border-radius:7px 7px 2px 2px;min-height:8px}.bar-wrap{height:100%;flex:1;display:flex;align-items:end}.day{font-size:9px;color:var(--muted);text-align:center;margin-top:5px}.donut{display:grid;place-items:center;min-height:210px}.ring{width:130px;height:130px;border-radius:50%;background:conic-gradient(#39d990 0 68%,#27334d 68% 100%);display:grid;place-items:center}.ring:after{content:"68%";width:92px;height:92px;background:#111a31;border-radius:50%;display:grid;place-items:center;font-size:24px;font-weight:900}
-.hidden{display:none}.empty{padding:30px;text-align:center;color:var(--muted)}
-.bottom{display:none}
-@media(max-width:800px){
- .hero{grid-template-columns:1fr}.exam-grid,.chapter-grid{grid-template-columns:repeat(2,1fr)}.filters{grid-template-columns:repeat(2,1fr)}.analytics{grid-template-columns:1fr}
-}
-@media(max-width:560px){
- main{padding:14px 14px 88px}.topbar{padding:10px 14px;height:68px}.brand{font-size:19px}.nav{padding-left:14px}.exam-grid,.chapter-grid{grid-template-columns:1fr 1fr}.hero-card{padding:20px}.hero h1{font-size:34px}.practice{padding:15px}.question{font-size:18px}.bottom{position:fixed;display:flex;bottom:0;left:0;right:0;height:72px;background:#111a2eeb;backdrop-filter:blur(15px);border-top:1px solid #27324a;z-index:30;justify-content:space-around}.bottom button{border:0;background:none;color:#77849c;font-size:11px;font-weight:800}.bottom button.active{color:#58b7ff}.bottom b{display:block;font-size:20px;margin-bottom:2px}
-}
-.toast{position:fixed;right:18px;bottom:90px;background:#182640;border:1px solid #334664;padding:13px 16px;border-radius:13px;box-shadow:var(--shadow);opacity:0;transform:translateY(10px);transition:.25s;z-index:50}.toast.show{opacity:1;transform:none}
-</style>
-</head>
+*{box-sizing:border-box} :root{--b:#247de1;--b2:#126bd0;--bg:#eef5fc;--ink:#15263d;--muted:#718096;--line:#e1eaf3;--shadow:0 10px 30px #20476f18}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px Arial,sans-serif}.header{height:68px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 22px;position:sticky;top:0;z-index:10}.logo{font-size:22px;font-weight:800;color:var(--b)}.logo span{color:var(--ink)}.right{display:flex;align-items:center;gap:12px}.balance{background:#edf5ff;color:#126bd0;padding:10px 14px;border-radius:10px;font-weight:700}.avatar{width:38px;height:38px;border-radius:50%;background:#5b2ca0;color:#fff;display:grid;place-items:center;font-weight:800}.layout{display:flex;max-width:1250px;margin:auto}.side{width:230px;background:#fff;min-height:calc(100vh - 68px);padding:16px 12px;border-right:1px solid var(--line);position:sticky;top:68px}.label{font-size:10px;color:#9aa8ba;font-weight:800;padding:10px}.nav{padding:12px;border-radius:10px;color:#65758b;font-weight:700;cursor:pointer;margin:3px 0}.nav.active,.nav:hover{background:#edf5ff;color:var(--b)}.content{flex:1;padding:25px;min-width:0}.welcome h1{margin:0 0 6px;font-size:28px}.welcome p{margin:0;color:var(--muted)}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;margin-top:20px}.card{background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:19px}.stat small{color:var(--muted);font-weight:700}.stat strong{display:block;font-size:25px;margin:8px 0}.up{font-size:11px;color:#15965e;font-weight:800}.section{margin-top:20px}.head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.head h2{margin:0;font-size:19px}.head span{color:var(--muted);font-size:12px}.quick{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.quick div{border:1px solid var(--line);border-radius:13px;padding:16px;background:linear-gradient(135deg,#fff,#f5faff)}.quick p{color:var(--muted);font-size:13px}.btn{border:0;background:linear-gradient(135deg,var(--b),var(--b2));color:#fff;padding:11px 16px;border-radius:9px;font-weight:800}.tablewrap{overflow:auto}.table{width:100%;border-collapse:collapse;min-width:600px}.table th,.table td{text-align:left;padding:13px;border-bottom:1px solid var(--line);font-size:13px}.table th{font-size:10px;color:#8997a9}.status{background:#eaf8f1;color:#15965e;border-radius:7px;padding:5px 8px;font-size:10px;font-weight:800}.form{display:grid;grid-template-columns:1fr 1fr;gap:14px}.field label{display:block;font-size:11px;font-weight:800;color:#52657c;margin-bottom:7px}.field input,.field select{width:100%;height:44px;border:1px solid #d8e2ed;border-radius:9px;background:#f8fbff;padding:0 12px}.full{grid-column:1/-1}.notice{background:#edf6ff;border-left:4px solid var(--b);padding:13px;border-radius:7px;color:#42617f;font-size:13px;margin-bottom:15px}.chart{height:200px;display:flex;gap:10px;align-items:end}.bar{flex:1;background:linear-gradient(#55a8f5,#2275d3);border-radius:7px 7px 2px 2px}.hidden{display:none}.mobile{display:none}
+@media(max-width:900px){.stats{grid-template-columns:1fr 1fr}.quick{grid-template-columns:1fr 1fr}}
+@media(max-width:650px){.side{display:none}.content{padding:17px 14px 85px}.header{padding:0 14px}.balance{display:none}.stats{gap:9px}.stat{padding:14px}.stat strong{font-size:21px}.quick{grid-template-columns:1fr}.form{grid-template-columns:1fr}.full{grid-column:auto}.mobile{display:flex;position:fixed;bottom:0;left:0;right:0;height:68px;background:#fff;border-top:1px solid var(--line);z-index:20;justify-content:space-around}.mobile button{border:0;background:none;color:#8290a4;font-size:10px;font-weight:800}.mobile button.active{color:var(--b)}.mobile b{display:block;font-size:19px}}
+</style></head>
 <body>
-<div class="app">
-<header class="topbar">
-  <div class="brand"><div class="logo">Q</div> PYQX</div>
-  <div class="top-actions"><button class="icon-btn" onclick="toast('Notifications are clear 🔔')">♧</button><button class="icon-btn" onclick="toggleTheme()">☼</button></div>
-</header>
-<nav class="nav">
-  <button class="active" onclick="showTab('home',this)">Home</button>
-  <button onclick="showTab('practice',this)">Practice</button>
-  <button onclick="showTab('pyq',this)">PYQ Bank</button>
-  <button onclick="showTab('analytics',this)">Analytics</button>
-  <button onclick="showTab('bookmarks',this)">Bookmarks</button>
-</nav>
+<header class="header"><div class="logo">Boost<span>Panel</span></div><div class="right"><div class="balance">Demo balance: ₹1,250</div><span>🔔</span><div class="avatar">R</div></div></header>
+<div class="layout">
+<aside class="side"><div class="label">MAIN MENU</div><div class="nav active" onclick="tab('dashboard',this)">⌂ &nbsp; Dashboard</div><div class="nav" onclick="tab('services',this)">▦ &nbsp; Services</div><div class="nav" onclick="tab('orders',this)">◷ &nbsp; Orders</div><div class="nav" onclick="tab('funds',this)">＋ &nbsp; Add funds</div><div class="nav" onclick="tab('analytics',this)">⌁ &nbsp; Analytics</div><div class="label">ACCOUNT</div><div class="nav" onclick="tab('profile',this)">◯ &nbsp; Profile</div></aside>
+<main class="content">
+<section id="dashboard"><div class="welcome"><h1>Welcome back, Raj 👋</h1><p>Manage your social media marketing workspace from one place.</p></div>
+<div class="stats"><div class="card stat"><small>Total orders</small><strong>128</strong><span class="up">↑ 12% this month</span></div><div class="card stat"><small>Completed</small><strong>112</strong><span class="up">87.5% completion</span></div><div class="card stat"><small>Spent</small><strong>₹8,420</strong><span class="up">This month</span></div><div class="card stat"><small>Balance</small><strong>₹1,250</strong><span class="up">Demo wallet</span></div></div>
+<div class="card section"><div class="head"><h2>Quick actions</h2><span>Choose a workspace</span></div><div class="quick"><div><b>📦 Browse services</b><p>Explore configured marketing services.</p><button class="btn" onclick="tab('services')">Open services</button></div><div><b>📋 Order history</b><p>Review recent demo orders.</p><button class="btn" onclick="tab('orders')">View orders</button></div><div><b>📈 Performance</b><p>See campaign analytics.</p><button class="btn" onclick="tab('analytics')">View analytics</button></div></div></div>
+<div class="card section"><div class="head"><h2>Recent orders</h2><span>Last 3</span></div><div class="tablewrap"><table class="table"><tr><th>ID</th><th>Service</th><th>Platform</th><th>Status</th></tr><tr><td>#1028</td><td>Content promotion</td><td>Instagram</td><td><span class="status">Completed</span></td></tr><tr><td>#1027</td><td>Social media campaign</td><td>YouTube</td><td><span class="status">Completed</span></td></tr><tr><td>#1026</td><td>Creator campaign</td><td>Instagram</td><td><span class="status">Completed</span></td></tr></table></div></div></section>
 
-<main>
-<section id="home">
- <div class="hero">
-  <div class="card hero-card">
-   <div class="eyebrow">YOUR DAILY PRACTICE</div>
-   <h1>Crack it.<br>One question at a time.</h1>
-   <p>JEE Main • JEE Advanced • NEET • BITSAT — PYQs, chapter practice and smart revision in one place.</p>
-   <div class="actions"><button class="primary" onclick="showTab('practice')">Start Practice →</button><button class="secondary" onclick="showTab('pyq')">Explore PYQs</button></div>
-  </div>
-  <div class="stats">
-   <div class="card stat"><b id="todayQs">2</b><span>Questions today</span></div>
-   <div class="card stat"><b id="accuracy">—</b><span>Accuracy</span></div>
-   <div class="card stat"><b id="streak">1 🔥</b><span>Day streak</span></div>
-   <div class="card stat"><b id="bookCount">0</b><span>Bookmarks</span></div>
-  </div>
- </div>
- <div class="section-head"><h2>Choose your exam</h2><span>All chapters open</span></div>
- <div class="exam-grid">
-  <div class="card exam" onclick="selectExam('JEE Main')"><span class="emoji">🎯</span><span class="badge">2026</span><h3>JEE Main</h3><p>Physics • Chem • Maths</p></div>
-  <div class="card exam" onclick="selectExam('JEE Advanced')"><span class="emoji">⚡</span><h3>JEE Advanced</h3><p>Advanced level PYQs</p></div>
-  <div class="card exam" onclick="selectExam('NEET')"><span class="emoji">🧬</span><h3>NEET</h3><p>Physics • Chem • Biology</p></div>
-  <div class="card exam" onclick="selectExam('BITSAT')"><span class="emoji">🚀</span><h3>BITSAT</h3><p>Speed practice</p></div>
- </div>
- <div class="section-head"><h2>Quick practice</h2><span>Pick a subject</span></div>
- <div class="chapter-grid">
-  <div class="card chapter" onclick="quick('Physics')">⚙️<h3>Physics</h3><p>Motion • NLM • WEP • Current</p></div>
-  <div class="card chapter" onclick="quick('Chemistry')">⚗️<h3>Chemistry</h3><p>Physical • Organic • Inorganic</p></div>
-  <div class="card chapter" onclick="quick('Mathematics')">∑<h3>Mathematics</h3><p>Algebra • Calculus • Geometry</p></div>
-  <div class="card chapter" onclick="quick('Biology')">🧬<h3>Biology</h3><p>Botany • Zoology • Genetics</p></div>
- </div>
-</section>
+<section id="services" class="hidden"><div class="welcome"><h1>Services</h1><p>Marketing service catalog — front-end demo.</p></div><div class="card section"><div class="notice">Demo only: no fake followers/likes/views automation or payment processing is connected.</div><div class="form"><div class="field"><label>PLATFORM</label><select><option>Instagram</option><option>YouTube</option><option>Facebook</option><option>X</option></select></div><div class="field"><label>SERVICE TYPE</label><select><option>Content promotion</option><option>Creator campaign</option><option>Social media management</option><option>Analytics report</option></select></div><div class="field full"><label>CONTENT / CAMPAIGN URL</label><input id="url" placeholder="https://example.com/content"></div><div class="field"><label>BUDGET (DEMO)</label><input placeholder="₹ 500"></div><div class="field"><label>DURATION</label><select><option>7 days</option><option>14 days</option><option>30 days</option></select></div></div><button class="btn" style="margin-top:15px" onclick="save()">Save campaign</button></div></section>
 
-<section id="practice" class="hidden">
- <div class="section-head"><h2>Practice Arena</h2><span>Smart question flow</span></div>
- <div class="card practice">
-  <div class="filters">
-   <div class="field"><label>EXAM</label><select id="exam"><option>JEE Main</option><option>JEE Advanced</option><option>NEET</option><option>BITSAT</option></select></div>
-   <div class="field"><label>SUBJECT</label><select id="subject"><option>Physics</option><option>Chemistry</option><option>Mathematics</option><option>Biology</option></select></div>
-   <div class="field"><label>CHAPTER</label><select id="chapter"><option>Motion in 1D</option><option>Motion in 2D</option><option>Newton's Laws</option><option>Quadratic Equations</option><option>Thermodynamics</option></select></div>
-   <div class="field"><label>YEAR</label><select><option>All Years</option><option>2026</option><option>2025</option><option>2024</option><option>2023</option></select></div>
-  </div>
-  <div class="mode-row"><button class="mode active" onclick="setMode(this)">Practice</button><button class="mode" onclick="setMode(this)">Timed</button><button class="mode" onclick="setMode(this)">Weak Topics</button><button class="mode" onclick="setMode(this)">PYQ Test</button></div>
-  <div class="progress"><i id="qProgress"></i></div>
-  <div class="qbox">
-   <div class="qmeta"><span id="qNo">QUESTION 1 / 5</span><span id="qYear">JEE MAIN • 2025</span></div>
-   <div class="question" id="question">A particle moves along a straight line with velocity v = 2t + 3 m/s. What is its displacement from t = 0 to t = 4 s?</div>
-   <div class="options" id="options"></div>
-   <div class="explain" id="explain"></div>
-   <div class="qfooter"><span class="timer" id="timer">00:00</span><div class="actions"><button class="secondary" onclick="bookmarkCurrent()">☆ Bookmark</button><button class="primary" id="nextBtn" onclick="nextQuestion()">Next →</button></div></div>
-  </div>
- </div>
-</section>
+<section id="orders" class="hidden"><div class="welcome"><h1>Orders</h1><p>Demo order history.</p></div><div class="card section"><div class="tablewrap"><table class="table"><tr><th>ID</th><th>Service</th><th>Platform</th><th>Date</th><th>Status</th></tr><tr><td>#1028</td><td>Content promotion</td><td>Instagram</td><td>06 Sep 2026</td><td><span class="status">Completed</span></td></tr><tr><td>#1027</td><td>Social media campaign</td><td>YouTube</td><td>05 Sep 2026</td><td><span class="status">Completed</span></td></tr></table></div></div></section>
 
-<section id="pyq" class="hidden">
- <div class="section-head"><h2>PYQ Bank</h2><span>Curated by exam & year</span></div>
- <div class="card practice">
-  <div class="filters">
-   <div class="field"><label>EXAM</label><select><option>JEE Main</option><option>JEE Advanced</option><option>NEET</option><option>BITSAT</option></select></div>
-   <div class="field"><label>SUBJECT</label><select><option>Physics</option><option>Chemistry</option><option>Mathematics</option></select></div>
-   <div class="field"><label>YEAR</label><select><option>2026</option><option>2025</option><option>2024</option><option>2023</option></select></div>
-   <div class="field"><label>TYPE</label><select><option>All PYQs</option><option>Easy</option><option>Medium</option><option>Hard</option></select></div>
-  </div>
-  <div class="chapter-grid" style="margin-top:15px">
-   <div class="card chapter"><span class="badge">48 Q</span><h3>Motion in 1D</h3><p>JEE Main • 2020–2026</p><button class="secondary" style="margin-top:12px" onclick="quick('Physics')">Practice</button></div>
-   <div class="card chapter"><span class="badge">62 Q</span><h3>Quadratic Equations</h3><p>JEE Main • 2020–2026</p><button class="secondary" style="margin-top:12px" onclick="quick('Mathematics')">Practice</button></div>
-   <div class="card chapter"><span class="badge">35 Q</span><h3>Thermodynamics</h3><p>JEE Main • 2020–2026</p><button class="secondary" style="margin-top:12px" onclick="quick('Chemistry')">Practice</button></div>
-   <div class="card chapter"><span class="badge">51 Q</span><h3>Newton's Laws</h3><p>JEE Main • 2020–2026</p><button class="secondary" style="margin-top:12px" onclick="quick('Physics')">Practice</button></div>
-  </div>
- </div>
-</section>
+<section id="funds" class="hidden"><div class="welcome"><h1>Add funds</h1><p>Wallet UI demo.</p></div><div class="card section"><div class="notice">Payment processing is disabled in this demo.</div><div class="form"><div class="field"><label>AMOUNT</label><input placeholder="₹ 500"></div><div class="field"><label>METHOD</label><select><option>UPI (demo)</option><option>Card (demo)</option></select></div></div><button class="btn" style="margin-top:15px" onclick="toast('Demo only — no payment processed')">Continue</button></div></section>
 
-<section id="analytics" class="hidden">
- <div class="section-head"><h2>Your Analytics</h2><span>Last 7 days</span></div>
- <div class="analytics">
-  <div class="card chart"><h3>Questions solved</h3><div class="bars">
-   <div class="bar-wrap"><div class="bar" style="height:45%"></div></div><div class="bar-wrap"><div class="bar" style="height:65%"></div></div><div class="bar-wrap"><div class="bar" style="height:30%"></div></div><div class="bar-wrap"><div class="bar" style="height:80%"></div></div><div class="bar-wrap"><div class="bar" style="height:55%"></div></div><div class="bar-wrap"><div class="bar" style="height:90%"></div></div><div class="bar-wrap"><div class="bar" style="height:35%"></div></div>
-  </div><div style="display:flex;gap:8px;margin-top:5px"><span class="day">M</span><span class="day">T</span><span class="day">W</span><span class="day">T</span><span class="day">F</span><span class="day">S</span><span class="day">S</span></div></div>
-  <div class="card donut"><div class="ring"></div><div style="margin-top:8px;color:var(--muted);font-size:13px">Overall accuracy</div></div>
- </div>
- <div class="section-head"><h2>Weak topic radar</h2><span>Revise these first</span></div>
- <div class="card practice">
-  <p>Motion in 2D <b style="float:right;color:#ff8a98">42%</b></p><div class="progress"><i style="width:42%"></i></div>
-  <p>Thermodynamics <b style="float:right;color:#ffc857">57%</b></p><div class="progress"><i style="width:57%"></i></div>
-  <p>Quadratic Equations <b style="float:right;color:#35d98b">78%</b></p><div class="progress"><i style="width:78%"></i></div>
- </div>
-</section>
+<section id="analytics" class="hidden"><div class="welcome"><h1>Analytics</h1><p>Simple demo performance overview.</p></div><div class="card section"><div class="head"><h2>Activity — last 7 days</h2><span>Demo data</span></div><div class="chart"><i class="bar" style="height:35%"></i><i class="bar" style="height:55%"></i><i class="bar" style="height:42%"></i><i class="bar" style="height:76%"></i><i class="bar" style="height:62%"></i><i class="bar" style="height:88%"></i><i class="bar" style="height:70%"></i></div></div></section>
 
-<section id="bookmarks" class="hidden">
- <div class="section-head"><h2>Bookmarked Questions</h2><span id="bookmarkSubtitle">0 saved</span></div>
- <div class="card empty" id="bookmarkList">No bookmarks yet.<br>Tap ☆ Bookmark while practicing.</div>
-</section>
-</main>
-<div class="bottom">
- <button class="active" onclick="showTab('home')"><b>⌂</b>Home</button>
- <button onclick="showTab('practice')"><b>◈</b>Practice</button>
- <button onclick="showTab('pyq')"><b>▣</b>PYQs</button>
- <button onclick="showTab('analytics')"><b>◔</b>Stats</button>
-</div>
-<div class="toast" id="toast"></div>
-</div>
-
+<section id="profile" class="hidden"><div class="welcome"><h1>Profile</h1><p>Account settings demo.</p></div><div class="card section"><div class="form"><div class="field"><label>NAME</label><input value="Raj"></div><div class="field"><label>EMAIL</label><input value="demo@example.com"></div><div class="field"><label>TIMEZONE</label><select><option>Asia/Kolkata</option></select></div><div class="field"><label>LANGUAGE</label><select><option>English</option><option>Hindi</option></select></div></div><button class="btn" style="margin-top:15px" onclick="toast('Profile saved locally')">Save changes</button></div></section>
+</main></div>
+<nav class="mobile"><button class="active" onclick="tab('dashboard',this)"><b>⌂</b>Home</button><button onclick="tab('services',this)"><b>▦</b>Services</button><button onclick="tab('orders',this)"><b>◷</b>Orders</button><button onclick="tab('analytics',this)"><b>⌁</b>Stats</button><button onclick="tab('profile',this)"><b>◯</b>Profile</button></nav>
+<div id="toast" style="position:fixed;right:15px;bottom:80px;background:#162b45;color:#fff;padding:12px 15px;border-radius:10px;opacity:0;transition:.2s"></div>
 <script>
-const questions=[
- {q:"A particle moves along a straight line with velocity v = 2t + 3 m/s. What is its displacement from t = 0 to t = 4 s?",o:["20 m","28 m","24 m","32 m"],a:1,e:"Displacement is the integral of velocity: ∫₀⁴(2t+3)dt = [t²+3t]₀⁴ = 28 m."},
- {q:"A body starts from rest and moves with constant acceleration 4 m/s². Its velocity after 5 s is:",o:["10 m/s","15 m/s","20 m/s","25 m/s"],a:2,e:"Using v = u + at, v = 0 + 4×5 = 20 m/s."},
- {q:"If the roots of x² − 5x + 6 = 0 are α and β, then α + β equals:",o:["6","5","−5","−6"],a:1,e:"For ax²+bx+c, sum of roots = −b/a = 5."},
- {q:"For an ideal gas, which quantity remains constant in an isothermal process?",o:["Pressure","Temperature","Volume","Internal energy only"],a:1,e:"Isothermal means temperature remains constant."},
- {q:"A force of 10 N acts on a 2 kg body. Neglecting other forces, its acceleration is:",o:["2 m/s²","5 m/s²","10 m/s²","20 m/s²"],a:1,e:"Newton's second law: a = F/m = 10/2 = 5 m/s²."}
-];
-let qi=0,score=0,answered=false,seconds=0,clock;
-const $=id=>document.getElementById(id);
-function showTab(id,btn){
- document.querySelectorAll('main>section').forEach(s=>s.classList.add('hidden'));
- $(id).classList.remove('hidden');
- document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));
- if(btn)btn.classList.add('active'); else [...document.querySelectorAll('.nav button')].find(b=>b.textContent.toLowerCase().includes(id==='practice'?'practice':id==='pyq'?'pyq':id==='analytics'?'analytics':'home'))?.classList.add('active');
- window.scrollTo({top:0,behavior:'smooth'});
- if(id==='practice')renderQuestion();
-}
-function selectExam(x){$('exam').value=x;showTab('practice')}
-function quick(s){$('subject').value=s;showTab('practice')}
-function setMode(el){document.querySelectorAll('.mode').forEach(x=>x.classList.remove('active'));el.classList.add('active');toast(el.textContent+' mode selected')}
-function renderQuestion(){
- const x=questions[qi]; answered=false; $('question').textContent=x.q;$('qNo').textContent=`QUESTION ${qi+1} / ${questions.length}`;
- $('qProgress').style.width=((qi)/questions.length*100)+'%';$('explain').style.display='none';$('explain').textContent='';
- $('options').innerHTML=x.o.map((v,i)=>`<button class="option" onclick="answer(${i})">${String.fromCharCode(65+i)}. ${v}</button>`).join('');
- $('nextBtn').textContent=qi===questions.length-1?'Finish ✓':'Next →'; seconds=0;clearInterval(clock);clock=setInterval(()=>{$('timer').textContent=`${String(Math.floor(seconds/60)).padStart(2,'0')}:${String(seconds%60).padStart(2,'0')}`;seconds++},1000);
-}
-function answer(i){
- if(answered)return; answered=true;let x=questions[qi], opts=document.querySelectorAll('.option');opts[x.a].classList.add('correct');
- if(i!==x.a)opts[i].classList.add('wrong');else{score++;localStorage.setItem('pyqx_score',score)}
- $('explain').textContent=(i===x.a?'Correct! ':'Not quite. ')+x.e;$('explain').style.display='block';$('qProgress').style.width=((qi+1)/questions.length*100)+'%';$('todayQs').textContent=Number($('todayQs').textContent)+1;updateStats();
-}
-function nextQuestion(){if(!answered){toast('Choose an answer first');return}if(qi<questions.length-1){qi++;renderQuestion()}else{toast(`Test complete — ${score}/${questions.length} correct 🎉`);qi=0;score=0;renderQuestion()}}
-function bookmarkCurrent(){
- let arr=JSON.parse(localStorage.getItem('pyqx_bookmarks')||'[]');let x=questions[qi];if(!arr.some(a=>a.q===x.q)){arr.push(x);localStorage.setItem('pyqx_bookmarks',JSON.stringify(arr));updateBookmarks();toast('Question bookmarked ★')}else toast('Already bookmarked')
-}
-function updateBookmarks(){let a=JSON.parse(localStorage.getItem('pyqx_bookmarks')||'[]');$('bookCount').textContent=a.length;$('bookmarkSubtitle').textContent=a.length+' saved';$('bookmarkList').innerHTML=a.length?a.map((x,i)=>`<div style="text-align:left;padding:14px;border-bottom:1px solid #25304b"><b>${i+1}. ${x.q}</b><p style="color:#8793ad;font-size:12px">Correct answer: ${x.o[x.a]}</p></div>`).join(''):'No bookmarks yet.<br>Tap ☆ Bookmark while practicing.'}
-function updateStats(){let s=Number(localStorage.getItem('pyqx_score')||0);let n=Number($('todayQs').textContent)||0;$('accuracy').textContent=n?Math.round((s/n)*100)+'%':'—'}
-function toast(t){let x=$('toast');x.textContent=t;x.classList.add('show');setTimeout(()=>x.classList.remove('show'),1800)}
-function toggleTheme(){document.body.style.filter=document.body.style.filter?'':'brightness(1.12)';toast('Display adjusted')}
-updateBookmarks();updateStats();
-</script>
-</body>
-</html>
+function tab(id,el){document.querySelectorAll('main section').forEach(s=>s.classList.add('hidden'));document.getElementById(id).classList.remove('hidden');document.querySelectorAll('.nav,.mobile button').forEach(x=>x.classList.remove('active'));if(el)el.classList.add('active');scrollTo({top:0,behavior:'smooth'})}
+function toast(m){let t=document.getElementById('toast');t.textContent=m;t.style.opacity=1;setTimeout(()=>t.style.opacity=0,1700)}
+function save(){let u=document.getElementById('url').value.trim();toast(u?'Demo campaign saved locally':'Enter a content URL first')}
+</script></body></html>
