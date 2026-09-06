@@ -2,146 +2,202 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>PHISH//LAB — Security Awareness Simulator</title>
-<link rel="stylesheet" href="style.css">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#0b1224">
+<title>PYQX — PYQ & Question Practice</title>
+<style>
+:root{
+  --bg:#0b1224;--panel:#111a31;--panel2:#17213a;--line:#25304b;
+  --text:#f4f7ff;--muted:#8793ad;--blue:#36a5ff;--blue2:#2579ff;
+  --purple:#a875ff;--green:#35d98b;--red:#ff6379;--yellow:#ffc857;
+  --shadow:0 18px 45px rgba(0,0,0,.28);--r:22px;
+}
+*{box-sizing:border-box} html{scroll-behavior:smooth}
+body{margin:0;background:linear-gradient(180deg,#091122 0%,#0d1528 60%,#0a1121 100%);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif}
+button,input,select{font:inherit}button{cursor:pointer}
+.app{max-width:1180px;margin:auto;min-height:100vh}
+.topbar{height:76px;display:flex;align-items:center;justify-content:space-between;padding:12px 20px;position:sticky;top:0;z-index:20;background:rgba(9,17,34,.88);backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,.05)}
+.brand{display:flex;align-items:center;gap:11px;font-weight:900;font-size:22px}.logo{width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,#2ea9ff,#7b42ff);display:grid;place-items:center;box-shadow:0 8px 22px #2679ff44}
+.top-actions{display:flex;gap:9px}.icon-btn{border:1px solid var(--line);background:#121b31;color:#cdd7eb;width:43px;height:43px;border-radius:14px}
+.nav{display:flex;gap:8px;padding:8px 20px 0;overflow:auto}.nav button{white-space:nowrap;border:0;background:transparent;color:var(--muted);padding:11px 15px;border-radius:12px;font-weight:800}.nav button.active{background:#172542;color:#fff}
+main{padding:20px}.hero{display:grid;grid-template-columns:1.5fr .8fr;gap:18px;margin-bottom:20px}
+.card{background:linear-gradient(145deg,rgba(22,32,56,.98),rgba(14,23,43,.98));border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow)}
+.hero-card{padding:25px;position:relative;overflow:hidden}.hero-card:after{content:"";position:absolute;width:220px;height:220px;border-radius:50%;background:#6f46ff22;right:-80px;top:-80px;filter:blur(5px)}
+.eyebrow{font-size:12px;letter-spacing:.12em;color:#6fbaff;font-weight:900}.hero h1{font-size:clamp(30px,5vw,48px);line-height:1.02;margin:9px 0}.hero p{color:var(--muted);margin:0 0 19px}.actions{display:flex;gap:10px;flex-wrap:wrap}
+.primary,.secondary{border:0;border-radius:14px;padding:13px 18px;font-weight:900}.primary{color:white;background:linear-gradient(135deg,#289fff,#7352ff);box-shadow:0 10px 25px #4b71ff2c}.secondary{background:#18233c;color:#d9e3f7;border:1px solid #2a3653}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.stat{padding:18px}.stat b{font-size:26px;display:block}.stat span{color:var(--muted);font-size:12px;font-weight:700}
+.section-head{display:flex;align-items:center;justify-content:space-between;margin:25px 2px 12px}.section-head h2{margin:0;font-size:21px}.section-head span{color:var(--muted);font-size:13px}
+.exam-grid,.chapter-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.exam,.chapter{padding:17px;min-height:110px;position:relative;transition:.2s}.exam:hover,.chapter:hover{transform:translateY(-2px);border-color:#3b78b9}.exam .emoji{font-size:25px}.exam h3,.chapter h3{margin:10px 0 3px;font-size:16px}.exam p,.chapter p{margin:0;color:var(--muted);font-size:12px}.badge{position:absolute;right:12px;top:12px;padding:5px 8px;border-radius:8px;background:#173c33;color:#55e09d;font-size:10px;font-weight:900}
+.practice{padding:20px}.filters{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.field label{display:block;color:var(--muted);font-size:11px;font-weight:800;margin:0 0 6px}.field select,.field input{width:100%;padding:12px;border-radius:12px;border:1px solid var(--line);background:#0e172a;color:white;outline:none}.mode-row{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}.mode{padding:9px 13px;border-radius:11px;background:#101a30;border:1px solid var(--line);color:#9ba8bf;font-weight:800}.mode.active{background:#17345a;color:#61b9ff;border-color:#2e79bd}
+.qbox{margin-top:15px;padding:20px;background:#0c1528;border:1px solid #263453;border-radius:18px}.qmeta{display:flex;justify-content:space-between;color:var(--muted);font-size:12px;font-weight:800}.question{font-size:20px;line-height:1.45;margin:17px 0}.options{display:grid;gap:10px}.option{width:100%;text-align:left;padding:14px;border-radius:13px;border:1px solid #293752;background:#121d33;color:#e6ecf7}.option:hover{border-color:#4a87c5}.option.correct{border-color:#35d98b;background:#123328}.option.wrong{border-color:#ff6379;background:#351721}.explain{display:none;margin-top:13px;padding:12px;border-radius:12px;background:#141f36;color:#b7c4d9;font-size:13px}.qfooter{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-top:15px}.timer{font-weight:900;color:#6dbaff}.progress{height:7px;background:#202b43;border-radius:9px;overflow:hidden;margin:10px 0}.progress i{display:block;height:100%;background:linear-gradient(90deg,#2da7ff,#9a62ff);width:0}
+.analytics{display:grid;grid-template-columns:1.3fr .7fr;gap:12px}.chart{padding:20px}.bars{height:150px;display:flex;align-items:end;gap:8px}.bar{flex:1;background:linear-gradient(180deg,#58b6ff,#714dff);border-radius:7px 7px 2px 2px;min-height:8px}.bar-wrap{height:100%;flex:1;display:flex;align-items:end}.day{font-size:9px;color:var(--muted);text-align:center;margin-top:5px}.donut{display:grid;place-items:center;min-height:210px}.ring{width:130px;height:130px;border-radius:50%;background:conic-gradient(#39d990 0 68%,#27334d 68% 100%);display:grid;place-items:center}.ring:after{content:"68%";width:92px;height:92px;background:#111a31;border-radius:50%;display:grid;place-items:center;font-size:24px;font-weight:900}
+.hidden{display:none}.empty{padding:30px;text-align:center;color:var(--muted)}
+.bottom{display:none}
+@media(max-width:800px){
+ .hero{grid-template-columns:1fr}.exam-grid,.chapter-grid{grid-template-columns:repeat(2,1fr)}.filters{grid-template-columns:repeat(2,1fr)}.analytics{grid-template-columns:1fr}
+}
+@media(max-width:560px){
+ main{padding:14px 14px 88px}.topbar{padding:10px 14px;height:68px}.brand{font-size:19px}.nav{padding-left:14px}.exam-grid,.chapter-grid{grid-template-columns:1fr 1fr}.hero-card{padding:20px}.hero h1{font-size:34px}.practice{padding:15px}.question{font-size:18px}.bottom{position:fixed;display:flex;bottom:0;left:0;right:0;height:72px;background:#111a2eeb;backdrop-filter:blur(15px);border-top:1px solid #27324a;z-index:30;justify-content:space-around}.bottom button{border:0;background:none;color:#77849c;font-size:11px;font-weight:800}.bottom button.active{color:#58b7ff}.bottom b{display:block;font-size:20px;margin-bottom:2px}
+}
+.toast{position:fixed;right:18px;bottom:90px;background:#182640;border:1px solid #334664;padding:13px 16px;border-radius:13px;box-shadow:var(--shadow);opacity:0;transform:translateY(10px);transition:.25s;z-index:50}.toast.show{opacity:1;transform:none}
+</style>
 </head>
 <body>
-<div class="scanline"></div>
+<div class="app">
 <header class="topbar">
-  <div class="brand"><span class="dot"></span> PHISH//LAB <small>DEMO // AWARENESS SIMULATOR</small></div>
-  <div class="status"><i></i> LOCAL SANDBOX <b id="clock">00:00:00</b></div>
+  <div class="brand"><div class="logo">Q</div> PYQX</div>
+  <div class="top-actions"><button class="icon-btn" onclick="toast('Notifications are clear 🔔')">♧</button><button class="icon-btn" onclick="toggleTheme()">☼</button></div>
 </header>
-
-<div class="layout">
-<aside class="sidebar">
-  <div class="logo">P/L<span>_</span></div>
-  <button class="nav active" data-tab="dashboard">[01] DASHBOARD</button>
-  <button class="nav" data-tab="builder">[02] DEMO BUILDER</button>
-  <button class="nav" data-tab="url">[03] URL LAB</button>
-  <button class="nav" data-tab="ip">[04] IP SIMULATOR</button>
-  <button class="nav" data-tab="logs">[05] EVENT LOG</button>
-  <div class="side-note">
-    <strong>SAFE MODE</strong>
-    <p>No passwords, tokens, cookies, IPs or form data are collected or transmitted.</p>
-  </div>
-</aside>
+<nav class="nav">
+  <button class="active" onclick="showTab('home',this)">Home</button>
+  <button onclick="showTab('practice',this)">Practice</button>
+  <button onclick="showTab('pyq',this)">PYQ Bank</button>
+  <button onclick="showTab('analytics',this)">Analytics</button>
+  <button onclick="showTab('bookmarks',this)">Bookmarks</button>
+</nav>
 
 <main>
-<section id="dashboard" class="tab active">
-  <div class="eyebrow">SECURITY OPERATIONS / TRAINING</div>
-  <h1>PHISHING <span>SIMULATOR</span></h1>
-  <p class="lead">Build harmless awareness scenarios, inspect suspicious URLs and train against social-engineering patterns.</p>
-  <div class="grid stats">
-    <div class="panel stat"><small>SCENARIOS</small><strong id="scenarioCount">03</strong><span>LOCAL ONLY</span></div>
-    <div class="panel stat"><small>DATA CAPTURE</small><strong>OFF</strong><span>ENFORCED</span></div>
-    <div class="panel stat"><small>NETWORK</small><strong>BLOCKED</strong><span>DEMO MODE</span></div>
-    <div class="panel stat"><small>RISK ENGINE</small><strong>READY</strong><span>CLIENT SIDE</span></div>
+<section id="home">
+ <div class="hero">
+  <div class="card hero-card">
+   <div class="eyebrow">YOUR DAILY PRACTICE</div>
+   <h1>Crack it.<br>One question at a time.</h1>
+   <p>JEE Main • JEE Advanced • NEET • BITSAT — PYQs, chapter practice and smart revision in one place.</p>
+   <div class="actions"><button class="primary" onclick="showTab('practice')">Start Practice →</button><button class="secondary" onclick="showTab('pyq')">Explore PYQs</button></div>
   </div>
-  <div class="grid two">
-    <div class="panel">
-      <div class="panel-title">THREAT FLOW</div>
-      <div class="flow"><span>URL</span><b>→</b><span>SCENARIO</span><b>→</b><span>USER TEST</span><b>→</b><span>EDUCATION</span></div>
-      <p class="muted">The simulator stops at the awareness screen. It never forwards credentials to a server.</p>
-    </div>
-    <div class="panel">
-      <div class="panel-title">QUICK START</div>
-      <button class="big-btn" data-go="builder">OPEN DEMO BUILDER <b>↗</b></button>
-      <button class="ghost" data-go="url">OPEN URL LAB <b>↗</b></button>
-    </div>
+  <div class="stats">
+   <div class="card stat"><b id="todayQs">2</b><span>Questions today</span></div>
+   <div class="card stat"><b id="accuracy">—</b><span>Accuracy</span></div>
+   <div class="card stat"><b id="streak">1 🔥</b><span>Day streak</span></div>
+   <div class="card stat"><b id="bookCount">0</b><span>Bookmarks</span></div>
   </div>
+ </div>
+ <div class="section-head"><h2>Choose your exam</h2><span>All chapters open</span></div>
+ <div class="exam-grid">
+  <div class="card exam" onclick="selectExam('JEE Main')"><span class="emoji">🎯</span><span class="badge">2026</span><h3>JEE Main</h3><p>Physics • Chem • Maths</p></div>
+  <div class="card exam" onclick="selectExam('JEE Advanced')"><span class="emoji">⚡</span><h3>JEE Advanced</h3><p>Advanced level PYQs</p></div>
+  <div class="card exam" onclick="selectExam('NEET')"><span class="emoji">🧬</span><h3>NEET</h3><p>Physics • Chem • Biology</p></div>
+  <div class="card exam" onclick="selectExam('BITSAT')"><span class="emoji">🚀</span><h3>BITSAT</h3><p>Speed practice</p></div>
+ </div>
+ <div class="section-head"><h2>Quick practice</h2><span>Pick a subject</span></div>
+ <div class="chapter-grid">
+  <div class="card chapter" onclick="quick('Physics')">⚙️<h3>Physics</h3><p>Motion • NLM • WEP • Current</p></div>
+  <div class="card chapter" onclick="quick('Chemistry')">⚗️<h3>Chemistry</h3><p>Physical • Organic • Inorganic</p></div>
+  <div class="card chapter" onclick="quick('Mathematics')">∑<h3>Mathematics</h3><p>Algebra • Calculus • Geometry</p></div>
+  <div class="card chapter" onclick="quick('Biology')">🧬<h3>Biology</h3><p>Botany • Zoology • Genetics</p></div>
+ </div>
 </section>
 
-<section id="builder" class="tab">
-  <div class="eyebrow">MODULE 02 / CONTROLLED SCENARIO</div>
-  <h2>DEMO PHISHING PAGE BUILDER</h2>
-  <p class="muted">Creates an educational mock page. It is intentionally branded as a training simulation and does not capture credentials.</p>
-  <div class="grid two">
-    <div class="panel">
-      <div class="panel-title">SCENARIO CONFIG</div>
-      <label>Scenario name<input id="scenarioName" value="Account Verification Drill"></label>
-      <label>Demo organization<input id="orgName" value="Example Security Lab"></label>
-      <label>Message<textarea id="scenarioMsg">Your account needs a security review. This is a simulated awareness exercise.</textarea></label>
-      <label>Theme
-        <select id="theme">
-          <option value="terminal">Terminal Green</option>
-          <option value="amber">Amber CRT</option>
-          <option value="red">Red Alert</option>
-        </select>
-      </label>
-      <button class="big-btn" id="buildBtn">BUILD SAFE DEMO <b>▶</b></button>
-    </div>
-    <div class="panel">
-      <div class="panel-title">LIVE PREVIEW</div>
-      <div id="preview" class="preview terminal">
-        <div class="preview-head">SECURITY NOTICE // TRAINING</div>
-        <h3>Example Security Lab</h3>
-        <p>Your account needs a security review. This is a simulated awareness exercise.</p>
-        <input placeholder="Demo username" autocomplete="off">
-        <input type="password" placeholder="Demo password" autocomplete="off">
-        <button id="demoSubmit">CONTINUE</button>
-        <div class="training-banner">⚠ TRAINING SIMULATION — NOTHING IS SENT OR SAVED</div>
-      </div>
-    </div>
+<section id="practice" class="hidden">
+ <div class="section-head"><h2>Practice Arena</h2><span>Smart question flow</span></div>
+ <div class="card practice">
+  <div class="filters">
+   <div class="field"><label>EXAM</label><select id="exam"><option>JEE Main</option><option>JEE Advanced</option><option>NEET</option><option>BITSAT</option></select></div>
+   <div class="field"><label>SUBJECT</label><select id="subject"><option>Physics</option><option>Chemistry</option><option>Mathematics</option><option>Biology</option></select></div>
+   <div class="field"><label>CHAPTER</label><select id="chapter"><option>Motion in 1D</option><option>Motion in 2D</option><option>Newton's Laws</option><option>Quadratic Equations</option><option>Thermodynamics</option></select></div>
+   <div class="field"><label>YEAR</label><select><option>All Years</option><option>2026</option><option>2025</option><option>2024</option><option>2023</option></select></div>
   </div>
+  <div class="mode-row"><button class="mode active" onclick="setMode(this)">Practice</button><button class="mode" onclick="setMode(this)">Timed</button><button class="mode" onclick="setMode(this)">Weak Topics</button><button class="mode" onclick="setMode(this)">PYQ Test</button></div>
+  <div class="progress"><i id="qProgress"></i></div>
+  <div class="qbox">
+   <div class="qmeta"><span id="qNo">QUESTION 1 / 5</span><span id="qYear">JEE MAIN • 2025</span></div>
+   <div class="question" id="question">A particle moves along a straight line with velocity v = 2t + 3 m/s. What is its displacement from t = 0 to t = 4 s?</div>
+   <div class="options" id="options"></div>
+   <div class="explain" id="explain"></div>
+   <div class="qfooter"><span class="timer" id="timer">00:00</span><div class="actions"><button class="secondary" onclick="bookmarkCurrent()">☆ Bookmark</button><button class="primary" id="nextBtn" onclick="nextQuestion()">Next →</button></div></div>
+  </div>
+ </div>
 </section>
 
-<section id="url" class="tab">
-  <div class="eyebrow">MODULE 03 / URL ANALYSIS</div>
-  <h2>SAFE URL LAB</h2>
-  <p class="muted">Generate links that stay inside this simulator, then inspect common phishing indicators.</p>
-  <div class="grid two">
-    <div class="panel">
-      <div class="panel-title">DEMO URL GENERATOR</div>
-      <label>Scenario ID<input id="scenarioId" value="account-review"></label>
-      <label>Test token (non-secret)<input id="demoToken" value="TRAINING-001"></label>
-      <button class="big-btn" id="makeUrl">GENERATE LOCAL DEMO URL</button>
-      <div class="output" id="urlOut">No URL generated.</div>
-      <button class="ghost" id="copyUrl">COPY</button>
-    </div>
-    <div class="panel">
-      <div class="panel-title">PHISHING INDICATOR CHECKER</div>
-      <label>URL<input id="checkUrl" placeholder="https://example.com/login?next=..."></label>
-      <button class="big-btn" id="analyzeUrl">ANALYZE</button>
-      <div id="urlResults" class="results"></div>
-    </div>
+<section id="pyq" class="hidden">
+ <div class="section-head"><h2>PYQ Bank</h2><span>Curated by exam & year</span></div>
+ <div class="card practice">
+  <div class="filters">
+   <div class="field"><label>EXAM</label><select><option>JEE Main</option><option>JEE Advanced</option><option>NEET</option><option>BITSAT</option></select></div>
+   <div class="field"><label>SUBJECT</label><select><option>Physics</option><option>Chemistry</option><option>Mathematics</option></select></div>
+   <div class="field"><label>YEAR</label><select><option>2026</option><option>2025</option><option>2024</option><option>2023</option></select></div>
+   <div class="field"><label>TYPE</label><select><option>All PYQs</option><option>Easy</option><option>Medium</option><option>Hard</option></select></div>
   </div>
+  <div class="chapter-grid" style="margin-top:15px">
+   <div class="card chapter"><span class="badge">48 Q</span><h3>Motion in 1D</h3><p>JEE Main • 2020–2026</p><button class="secondary" style="margin-top:12px" onclick="quick('Physics')">Practice</button></div>
+   <div class="card chapter"><span class="badge">62 Q</span><h3>Quadratic Equations</h3><p>JEE Main • 2020–2026</p><button class="secondary" style="margin-top:12px" onclick="quick('Mathematics')">Practice</button></div>
+   <div class="card chapter"><span class="badge">35 Q</span><h3>Thermodynamics</h3><p>JEE Main • 2020–2026</p><button class="secondary" style="margin-top:12px" onclick="quick('Chemistry')">Practice</button></div>
+   <div class="card chapter"><span class="badge">51 Q</span><h3>Newton's Laws</h3><p>JEE Main • 2020–2026</p><button class="secondary" style="margin-top:12px" onclick="quick('Physics')">Practice</button></div>
+  </div>
+ </div>
 </section>
 
-<section id="ip" class="tab">
-  <div class="eyebrow">MODULE 04 / NETWORK AWARENESS</div>
-  <h2>IP ADDRESS SIMULATOR</h2>
-  <p class="muted">Real visitor-IP collection is disabled. This module uses documentation-only addresses for testing UI and reports.</p>
-  <div class="grid two">
-    <div class="panel center">
-      <div class="ipbox" id="fakeIp">192.0.2.42</div>
-      <button class="big-btn" id="newIp">GENERATE TEST IP</button>
-      <small class="muted">RFC 5737 documentation range</small>
-    </div>
-    <div class="panel">
-      <div class="panel-title">WHY THIS MATTERS</div>
-      <ul class="checks">
-        <li>Public IP collection is not enabled in this demo.</li>
-        <li>No geolocation lookup is performed.</li>
-        <li>No fingerprinting or tracking is performed.</li>
-        <li>Use this panel only to test defensive UI/reporting.</li>
-      </ul>
-    </div>
-  </div>
+<section id="analytics" class="hidden">
+ <div class="section-head"><h2>Your Analytics</h2><span>Last 7 days</span></div>
+ <div class="analytics">
+  <div class="card chart"><h3>Questions solved</h3><div class="bars">
+   <div class="bar-wrap"><div class="bar" style="height:45%"></div></div><div class="bar-wrap"><div class="bar" style="height:65%"></div></div><div class="bar-wrap"><div class="bar" style="height:30%"></div></div><div class="bar-wrap"><div class="bar" style="height:80%"></div></div><div class="bar-wrap"><div class="bar" style="height:55%"></div></div><div class="bar-wrap"><div class="bar" style="height:90%"></div></div><div class="bar-wrap"><div class="bar" style="height:35%"></div></div>
+  </div><div style="display:flex;gap:8px;margin-top:5px"><span class="day">M</span><span class="day">T</span><span class="day">W</span><span class="day">T</span><span class="day">F</span><span class="day">S</span><span class="day">S</span></div></div>
+  <div class="card donut"><div class="ring"></div><div style="margin-top:8px;color:var(--muted);font-size:13px">Overall accuracy</div></div>
+ </div>
+ <div class="section-head"><h2>Weak topic radar</h2><span>Revise these first</span></div>
+ <div class="card practice">
+  <p>Motion in 2D <b style="float:right;color:#ff8a98">42%</b></p><div class="progress"><i style="width:42%"></i></div>
+  <p>Thermodynamics <b style="float:right;color:#ffc857">57%</b></p><div class="progress"><i style="width:57%"></i></div>
+  <p>Quadratic Equations <b style="float:right;color:#35d98b">78%</b></p><div class="progress"><i style="width:78%"></i></div>
+ </div>
 </section>
 
-<section id="logs" class="tab">
-  <div class="eyebrow">MODULE 05 / LOCAL TELEMETRY</div>
-  <h2>EVENT LOG</h2>
-  <div class="panel">
-    <div class="logbar"><span>TIME</span><span>EVENT</span><span>STATUS</span></div>
-    <div id="logsList"></div>
-    <button class="ghost" id="clearLogs">CLEAR LOCAL LOG</button>
-  </div>
+<section id="bookmarks" class="hidden">
+ <div class="section-head"><h2>Bookmarked Questions</h2><span id="bookmarkSubtitle">0 saved</span></div>
+ <div class="card empty" id="bookmarkList">No bookmarks yet.<br>Tap ☆ Bookmark while practicing.</div>
 </section>
 </main>
+<div class="bottom">
+ <button class="active" onclick="showTab('home')"><b>⌂</b>Home</button>
+ <button onclick="showTab('practice')"><b>◈</b>Practice</button>
+ <button onclick="showTab('pyq')"><b>▣</b>PYQs</button>
+ <button onclick="showTab('analytics')"><b>◔</b>Stats</button>
 </div>
-<footer>PHISH//LAB • DEFENSIVE SECURITY TRAINING • FOUNDER: RAJ SHARMA • NO CREDENTIAL COLLECTION</footer>
-<script src="script.js"></script>
+<div class="toast" id="toast"></div>
+</div>
+
+<script>
+const questions=[
+ {q:"A particle moves along a straight line with velocity v = 2t + 3 m/s. What is its displacement from t = 0 to t = 4 s?",o:["20 m","28 m","24 m","32 m"],a:1,e:"Displacement is the integral of velocity: ∫₀⁴(2t+3)dt = [t²+3t]₀⁴ = 28 m."},
+ {q:"A body starts from rest and moves with constant acceleration 4 m/s². Its velocity after 5 s is:",o:["10 m/s","15 m/s","20 m/s","25 m/s"],a:2,e:"Using v = u + at, v = 0 + 4×5 = 20 m/s."},
+ {q:"If the roots of x² − 5x + 6 = 0 are α and β, then α + β equals:",o:["6","5","−5","−6"],a:1,e:"For ax²+bx+c, sum of roots = −b/a = 5."},
+ {q:"For an ideal gas, which quantity remains constant in an isothermal process?",o:["Pressure","Temperature","Volume","Internal energy only"],a:1,e:"Isothermal means temperature remains constant."},
+ {q:"A force of 10 N acts on a 2 kg body. Neglecting other forces, its acceleration is:",o:["2 m/s²","5 m/s²","10 m/s²","20 m/s²"],a:1,e:"Newton's second law: a = F/m = 10/2 = 5 m/s²."}
+];
+let qi=0,score=0,answered=false,seconds=0,clock;
+const $=id=>document.getElementById(id);
+function showTab(id,btn){
+ document.querySelectorAll('main>section').forEach(s=>s.classList.add('hidden'));
+ $(id).classList.remove('hidden');
+ document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));
+ if(btn)btn.classList.add('active'); else [...document.querySelectorAll('.nav button')].find(b=>b.textContent.toLowerCase().includes(id==='practice'?'practice':id==='pyq'?'pyq':id==='analytics'?'analytics':'home'))?.classList.add('active');
+ window.scrollTo({top:0,behavior:'smooth'});
+ if(id==='practice')renderQuestion();
+}
+function selectExam(x){$('exam').value=x;showTab('practice')}
+function quick(s){$('subject').value=s;showTab('practice')}
+function setMode(el){document.querySelectorAll('.mode').forEach(x=>x.classList.remove('active'));el.classList.add('active');toast(el.textContent+' mode selected')}
+function renderQuestion(){
+ const x=questions[qi]; answered=false; $('question').textContent=x.q;$('qNo').textContent=`QUESTION ${qi+1} / ${questions.length}`;
+ $('qProgress').style.width=((qi)/questions.length*100)+'%';$('explain').style.display='none';$('explain').textContent='';
+ $('options').innerHTML=x.o.map((v,i)=>`<button class="option" onclick="answer(${i})">${String.fromCharCode(65+i)}. ${v}</button>`).join('');
+ $('nextBtn').textContent=qi===questions.length-1?'Finish ✓':'Next →'; seconds=0;clearInterval(clock);clock=setInterval(()=>{$('timer').textContent=`${String(Math.floor(seconds/60)).padStart(2,'0')}:${String(seconds%60).padStart(2,'0')}`;seconds++},1000);
+}
+function answer(i){
+ if(answered)return; answered=true;let x=questions[qi], opts=document.querySelectorAll('.option');opts[x.a].classList.add('correct');
+ if(i!==x.a)opts[i].classList.add('wrong');else{score++;localStorage.setItem('pyqx_score',score)}
+ $('explain').textContent=(i===x.a?'Correct! ':'Not quite. ')+x.e;$('explain').style.display='block';$('qProgress').style.width=((qi+1)/questions.length*100)+'%';$('todayQs').textContent=Number($('todayQs').textContent)+1;updateStats();
+}
+function nextQuestion(){if(!answered){toast('Choose an answer first');return}if(qi<questions.length-1){qi++;renderQuestion()}else{toast(`Test complete — ${score}/${questions.length} correct 🎉`);qi=0;score=0;renderQuestion()}}
+function bookmarkCurrent(){
+ let arr=JSON.parse(localStorage.getItem('pyqx_bookmarks')||'[]');let x=questions[qi];if(!arr.some(a=>a.q===x.q)){arr.push(x);localStorage.setItem('pyqx_bookmarks',JSON.stringify(arr));updateBookmarks();toast('Question bookmarked ★')}else toast('Already bookmarked')
+}
+function updateBookmarks(){let a=JSON.parse(localStorage.getItem('pyqx_bookmarks')||'[]');$('bookCount').textContent=a.length;$('bookmarkSubtitle').textContent=a.length+' saved';$('bookmarkList').innerHTML=a.length?a.map((x,i)=>`<div style="text-align:left;padding:14px;border-bottom:1px solid #25304b"><b>${i+1}. ${x.q}</b><p style="color:#8793ad;font-size:12px">Correct answer: ${x.o[x.a]}</p></div>`).join(''):'No bookmarks yet.<br>Tap ☆ Bookmark while practicing.'}
+function updateStats(){let s=Number(localStorage.getItem('pyqx_score')||0);let n=Number($('todayQs').textContent)||0;$('accuracy').textContent=n?Math.round((s/n)*100)+'%':'—'}
+function toast(t){let x=$('toast');x.textContent=t;x.classList.add('show');setTimeout(()=>x.classList.remove('show'),1800)}
+function toggleTheme(){document.body.style.filter=document.body.style.filter?'':'brightness(1.12)';toast('Display adjusted')}
+updateBookmarks();updateStats();
+</script>
 </body>
 </html>

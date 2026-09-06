@@ -1,21 +1,16 @@
-# PHISH//LAB — Safe Phishing Awareness Simulator
+# PYQX — PYQ & Question Practice Website
 
-A mobile-first cybersecurity UI inspired by retro CRT / terminal dashboards.
+Mobile-first, GitHub Pages compatible standalone website.
 
-## Safety design
-- No credential collection.
-- No password/token transmission.
-- No visitor public-IP collection.
-- IP module uses RFC 5737 documentation addresses only.
-- URL generator creates a local hash-based demo URL.
-- Everything runs client-side.
+## Included
+- PYQ Bank with exam/subject/chapter/year filters
+- Practice Arena with MCQ questions
+- Instant correct/wrong feedback + explanations
+- Practice / Timed / Weak Topics / PYQ Test modes UI
+- Bookmark questions using localStorage
+- Progress, accuracy, streak and analytics UI
+- Responsive mobile bottom navigation
+- No frameworks or external dependencies
 
 ## Run
-Open `index.html` directly, or deploy the folder to GitHub Pages.
-
-## Files
-- index.html
-- style.css
-- script.js
-
-Founder branding: Raj Sharma
+Open `index.html` directly in a browser, or upload the folder to a GitHub repository and enable GitHub Pages.
