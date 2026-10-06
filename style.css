@@ -167,3 +167,127 @@ body[data-theme="midnight"]{--bg:#030712;--panel:#0b1220;--text:#e8f0ff;--muted:
     color:#555!important;
   }
 }
+
+#printPages{display:none}
+
+@media print{
+  body > header,
+  main > .setup,
+  main > .trackerPanel,
+  .themeMenu{
+    display:none!important;
+  }
+  main{
+    padding:0!important;
+    margin:0!important;
+    max-width:none!important;
+  }
+  #printPages{
+    display:block!important;
+  }
+  .printPage{
+    width:100%;
+    height:calc(297mm - 16mm);
+    box-sizing:border-box;
+    page-break-after:always;
+    break-after:page;
+    padding:0;
+  }
+  .printPage:last-child{
+    page-break-after:auto;
+    break-after:auto;
+  }
+  .printPage .panel{
+    width:100%;
+    height:100%;
+    box-sizing:border-box;
+    border:1.2px solid #111;
+    border-radius:4px;
+    box-shadow:none;
+    background:#fff!important;
+    margin:0;
+    padding:5mm;
+  }
+  .printPage .trackerHead{
+    margin-bottom:4mm;
+  }
+  .printPage .trackerHead h2{
+    font-size:16pt;
+    margin:1mm 0;
+  }
+  .printPage .eyebrow{
+    font-size:7pt;
+    letter-spacing:1.2px;
+  }
+  .printPage .progress{
+    font-size:14pt;
+  }
+  .printPage .pageLabel{
+    font-size:8pt;
+    color:#555;
+    margin-top:1mm;
+  }
+  .printPage .tableWrap{
+    overflow:visible;
+    border:1px solid #111;
+    border-radius:2px;
+  }
+  .printPage table{
+    width:100%;
+    min-width:0;
+    table-layout:fixed;
+    border-collapse:collapse;
+    font-size:9pt;
+  }
+  .printPage th{
+    font-size:8.5pt;
+    font-weight:800;
+    height:9mm;
+    padding:2mm 1.5mm;
+    background:#20242b!important;
+    color:#fff!important;
+    border:1px solid #111;
+    -webkit-print-color-adjust:exact;
+    print-color-adjust:exact;
+  }
+  .printPage td{
+    height:11mm;
+    padding:1.2mm 1.5mm;
+    border:1px solid #777;
+    vertical-align:middle;
+  }
+  .printPage th:nth-child(1),.printPage td:nth-child(1){width:14%}
+  .printPage th:nth-child(2),.printPage td:nth-child(2){width:18%}
+  .printPage th:nth-child(3),.printPage td:nth-child(3){width:14%}
+  .printPage th:nth-child(4),.printPage td:nth-child(4){width:9%}
+  .printPage th:nth-child(5),.printPage td:nth-child(5){width:9%}
+  .printPage th:nth-child(6),.printPage td:nth-child(6){width:26%}
+  .printPage th:nth-child(7),.printPage td:nth-child(7){width:10%}
+  .printPage .checks{
+    display:flex;
+    flex-wrap:nowrap;
+    justify-content:center;
+    align-items:center;
+    gap:1.1mm;
+    width:100%;
+    overflow:hidden;
+  }
+  .printPage .box{
+    width:4.2mm;
+    height:4.2mm;
+    min-width:4.2mm;
+    flex:0 0 4.2mm;
+    border:1.2px solid #222;
+    border-radius:1px;
+    background:#fff!important;
+  }
+  .printPage .box.checked{
+    background:#111!important;
+    color:#fff!important;
+    border-color:#111;
+  }
+  .printPage .box.checked::after{font-size:8pt}
+  .printPage .dayNum{font-size:9.5pt}
+  .printPage .sub{font-size:6.5pt;color:#555!important}
+  @page{size:A4 portrait;margin:8mm}
+}
