@@ -1,47 +1,56 @@
-const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
-const logs=[];
-function log(event,status="OK"){logs.unshift({t:new Date().toLocaleTimeString(),e:event,s:status});renderLogs()}
-function renderLogs(){$("#logsList").innerHTML=logs.slice(0,30).map(x=>`<div class="logrow"><span>${x.t}</span><span>${x.e}</span><span class="ok">${x.s}</span></div>`).join("")}
-function tab(id){$$(".tab").forEach(x=>x.classList.remove("active"));$("#"+id).classList.add("active");$$(".nav").forEach(x=>x.classList.toggle("active",x.dataset.tab===id))}
-$$(".nav").forEach(b=>b.onclick=()=>tab(b.dataset.tab));
-$$("[data-go]").forEach(b=>b.onclick=()=>tab(b.dataset.go));
-setInterval(()=>$("#clock").textContent=new Date().toLocaleTimeString(),1000);
+const $=id=>document.getElementById(id);
+const settings=['days','lectures','hw','dpp','pyq','questions','rev'];
+const storeKey='examytrack-v1';
+let state=JSON.parse(localStorage.getItem(storeKey)||'null')||{
+  settings:{days:14,lectures:4,hw:1,dpp:1,pyq:1,questions:30,rev:1},checks:{},theme:'dark'
+};
+settings.forEach(k=>$(k).value=state.settings[k]);
+document.body.dataset.theme=state.theme;
 
-function updatePreview(){
- const p=$("#preview"); p.className="preview "+$("#theme").value;
- p.querySelector("h3").textContent=$("#orgName").value;
- p.querySelector("p").textContent=$("#scenarioMsg").value;
+function save(){localStorage.setItem(storeKey,JSON.stringify(state));}
+function countBlocks(n){return Math.ceil(Number(n||0)/10)}
+function boxes(day,type,count){
+  const wrap=document.createElement('div'); wrap.className='checks';
+  for(let i=0;i<count;i++){
+    const b=document.createElement('button'); b.className='box';
+    const key=`${day}-${type}-${i}`;
+    if(state.checks[key]) b.classList.add('checked');
+    b.onclick=()=>{state.checks[key]=!state.checks[key];b.classList.toggle('checked');save();updateProgress()};
+    wrap.appendChild(b);
+  }
+  return wrap;
 }
-["scenarioName","orgName","scenarioMsg","theme"].forEach(id=>$("#"+id).addEventListener("input",updatePreview));
-$("#buildBtn").onclick=()=>{updatePreview();log("Safe demo scenario built: "+$("#scenarioName").value);alert("SAFE DEMO READY — no credentials are stored or transmitted.");};
-$("#demoSubmit").onclick=()=>{log("Demo interaction triggered — credential capture blocked","BLOCKED");alert("Training checkpoint reached.\n\nNo username/password was collected, stored, or sent.");};
-
-$("#makeUrl").onclick=()=>{
- const sid=encodeURIComponent($("#scenarioId").value||"training");
- const tok=encodeURIComponent($("#demoToken").value||"DEMO");
- const base=location.href.split("#")[0];
- const u=base+"#demo="+sid+"&token="+tok;
- $("#urlOut").textContent=u; $("#checkUrl").value=u; log("Safe local demo URL generated");
+function render(){
+  const s=state.settings, t=$('tracker'); t.innerHTML='';
+  const head=t.insertRow(); ['DAY','LECTURES','HW / MODULE','DPP','PYQ','QUESTIONS (10 = 1 □)','REV'].forEach(x=>{const c=head.insertCell();c.outerHTML=`<th>${x}</th>`});
+  for(let d=1;d<=s.days;d++){
+    const r=t.insertRow(), c=r.insertCell();
+    c.innerHTML=`<span class="dayNum">DAY ${d}</span><span class="sub">JEE TRACK</span>`;
+    const vals=[['lec',s.lectures],['hw',s.hw],['dpp',s.dpp],['pyq',s.pyq],['q',countBlocks(s.questions)],['rev',s.rev]];
+    vals.forEach(([type,n])=>r.insertCell().appendChild(boxes(d,type,n)));
+  }
+  updateProgress();
+}
+function updateProgress(){
+  const s=state.settings;
+  let total=s.days*(s.lectures+s.hw+s.dpp+s.pyq+countBlocks(s.questions)+s.rev), done=0;
+  for(let d=1;d<=s.days;d++){
+    for(const [type,n] of [['lec',s.lectures],['hw',s.hw],['dpp',s.dpp],['pyq',s.pyq],['q',countBlocks(s.questions)],['rev',s.rev]])
+      for(let i=0;i<n;i++) if(state.checks[`${d}-${type}-${i}`]) done++;
+  }
+  $('progress').textContent=(total?Math.round(done/total*100):0)+'%';
+}
+$('generate').onclick=()=>{
+  settings.forEach(k=>state.settings[k]=Math.max(0,Number($(k).value)||0));
+  state.settings.days=Math.min(30,Math.max(1,state.settings.days));
+  save();render();
 };
-$("#copyUrl").onclick=async()=>{if($("#urlOut").textContent.startsWith("http")){await navigator.clipboard.writeText($("#urlOut").textContent);log("Demo URL copied to clipboard");}};
-$("#analyzeUrl").onclick=()=>{
- let raw=$("#checkUrl").value.trim(), out=$("#urlResults"); out.innerHTML="";
- if(!raw){out.innerHTML='<div class="result bad">ENTER A URL FIRST</div>';return}
- let u; try{u=new URL(raw)}catch{out.innerHTML='<div class="result bad">INVALID URL FORMAT</div>';return}
- const checks=[
-  [u.protocol!=="https:","warn","No HTTPS — transport encryption is absent."],
-  [u.hostname.match(/^\d{1,3}(\.\d{1,3}){3}$/),"bad","Hostname is an IP address instead of a normal domain."],
-  [u.hostname.includes("xn--"),"warn","Punycode/IDN hostname detected; inspect characters carefully."],
-  [raw.includes("@"),"bad","@ in a URL can hide the actual destination from casual inspection."],
-  [u.hostname.split(".").length>4,"warn","Many hostname labels/subdomains — verify the real domain."],
-  [u.search.length>120,"warn","Unusually long query string — inspect parameters before trusting it."]
- ];
- let hits=0; checks.forEach(c=>{if(c[0]){hits++;out.innerHTML+=`<div class="result ${c[1]}">${c[2]}</div>`}});
- if(!hits)out.innerHTML='<div class="result">NO BASIC INDICATORS TRIGGERED — still verify the domain and context.</div>';
- log("URL analyzed: "+u.hostname);
+$('clear').onclick=()=>{
+  if(confirm('Clear all ticks?')){state.checks={};save();render();}
 };
-
-function randomIp(){return `192.0.2.${Math.floor(Math.random()*253)+1}`}
-$("#newIp").onclick=()=>{$("#fakeIp").textContent=randomIp();log("Documentation IP generated (simulated)")};
-$("#clearLogs").onclick=()=>{logs.length=0;renderLogs()};
-log("Sandbox initialized");
+$('print').onclick=()=>window.print();
+$('themeBtn').onclick=()=>$('themeMenu').classList.toggle('open');
+document.querySelectorAll('[data-theme]').forEach(b=>b.onclick=()=>{
+  state.theme=b.dataset.theme;document.body.dataset.theme=state.theme;save();$('themeMenu').classList.remove('open');
+});
+render();
