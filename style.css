@@ -107,7 +107,7 @@ body[data-theme="midnight"]{--bg:#030712;--panel:#0b1220;--text:#e8f0ff;--muted:
     min-width:0;
     table-layout:fixed;
     border-collapse:collapse;
-    font-size:9.5pt;
+    font-size:9pt;
   }
   th{
     font-size:8.5pt;
@@ -126,24 +126,27 @@ body[data-theme="midnight"]{--bg:#030712;--panel:#0b1220;--text:#e8f0ff;--muted:
     border:1px solid #777;
     vertical-align:middle;
   }
-  th:nth-child(1),td:nth-child(1){width:15%}
-  th:nth-child(2),td:nth-child(2){width:20%}
-  th:nth-child(3),td:nth-child(3){width:15%}
-  th:nth-child(4),td:nth-child(4){width:10%}
-  th:nth-child(5),td:nth-child(5){width:10%}
-  th:nth-child(6),td:nth-child(6){width:20%}
+  th:nth-child(1),td:nth-child(1){width:14%}
+  th:nth-child(2),td:nth-child(2){width:18%}
+  th:nth-child(3),td:nth-child(3){width:14%}
+  th:nth-child(4),td:nth-child(4){width:9%}
+  th:nth-child(5),td:nth-child(5){width:9%}
+  th:nth-child(6),td:nth-child(6){width:26%}
   th:nth-child(7),td:nth-child(7){width:10%}
   .checks{
     display:flex;
     flex-wrap:nowrap;
     justify-content:center;
     align-items:center;
-    gap:2mm;
+    gap:1.1mm;
+    width:100%;
+    overflow:hidden;
   }
   .box{
-    width:5mm;
-    height:5mm;
-    min-width:5mm;
+    width:4.2mm;
+    height:4.2mm;
+    min-width:4.2mm;
+    flex:0 0 4.2mm;
     border:1.2px solid #222;
     border-radius:1px;
     background:#fff!important;
