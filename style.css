@@ -138,15 +138,15 @@ body[data-theme="midnight"]{--bg:#030712;--panel:#0b1220;--text:#e8f0ff;--muted:
     flex-wrap:nowrap;
     justify-content:center;
     align-items:center;
-    gap:1.1mm;
+    gap:0.9mm;
     width:100%;
     overflow:hidden;
   }
   .box{
-    width:4.2mm;
-    height:4.2mm;
-    min-width:4.2mm;
-    flex:0 0 4.2mm;
+    width:3.7mm;
+    height:3.7mm;
+    min-width:3.7mm;
+    flex:0 0 3.7mm;
     border:1.2px solid #222;
     border-radius:1px;
     background:#fff!important;
@@ -257,26 +257,26 @@ body[data-theme="midnight"]{--bg:#030712;--panel:#0b1220;--text:#e8f0ff;--muted:
     vertical-align:middle;
   }
   .printPage th:nth-child(1),.printPage td:nth-child(1){width:14%}
-  .printPage th:nth-child(2),.printPage td:nth-child(2){width:18%}
-  .printPage th:nth-child(3),.printPage td:nth-child(3){width:14%}
-  .printPage th:nth-child(4),.printPage td:nth-child(4){width:9%}
-  .printPage th:nth-child(5),.printPage td:nth-child(5){width:9%}
-  .printPage th:nth-child(6),.printPage td:nth-child(6){width:26%}
+  .printPage th:nth-child(2),.printPage td:nth-child(2){width:17%}
+  .printPage th:nth-child(3),.printPage td:nth-child(3){width:13%}
+  .printPage th:nth-child(4),.printPage td:nth-child(4){width:8%}
+  .printPage th:nth-child(5),.printPage td:nth-child(5){width:8%}
+  .printPage th:nth-child(6),.printPage td:nth-child(6){width:30%}
   .printPage th:nth-child(7),.printPage td:nth-child(7){width:10%}
   .printPage .checks{
     display:flex;
     flex-wrap:nowrap;
     justify-content:center;
     align-items:center;
-    gap:1.1mm;
+    gap:0.9mm;
     width:100%;
     overflow:hidden;
   }
   .printPage .box{
-    width:4.2mm;
-    height:4.2mm;
-    min-width:4.2mm;
-    flex:0 0 4.2mm;
+    width:3.7mm;
+    height:3.7mm;
+    min-width:3.7mm;
+    flex:0 0 3.7mm;
     border:1.2px solid #222;
     border-radius:1px;
     background:#fff!important;
@@ -290,4 +290,16 @@ body[data-theme="midnight"]{--bg:#030712;--panel:#0b1220;--text:#e8f0ff;--muted:
   .printPage .dayNum{font-size:9.5pt}
   .printPage .sub{font-size:6.5pt;color:#555!important}
   @page{size:A4 portrait;margin:8mm}
+}
+
+@media print{
+  .printPage td:nth-child(6) .checks{
+    gap:0.8mm;
+  }
+  .printPage td:nth-child(6) .box{
+    width:3.6mm;
+    height:3.6mm;
+    min-width:3.6mm;
+    flex-basis:3.6mm;
+  }
 }
