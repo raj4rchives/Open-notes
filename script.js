@@ -2,7 +2,7 @@ const $=id=>document.getElementById(id);
 const settings=['days','lectures','hw','dpp','pyq','questions','rev'];
 const storeKey='examytrack-v1';
 let state=JSON.parse(localStorage.getItem(storeKey)||'null')||{
-  settings:{days:14,lectures:4,hw:1,dpp:1,pyq:1,questions:30,rev:1},checks:{},theme:'dark'
+  settings:{days:20,lectures:4,hw:1,dpp:1,pyq:1,questions:30,rev:1},checks:{},theme:'dark'
 };
 settings.forEach(k=>$(k).value=state.settings[k]);
 document.body.dataset.theme=state.theme;
