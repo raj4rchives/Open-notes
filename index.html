@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mentor Daily Study Tracker</title>
+    <title>Complete Daily Study Tracker</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- html2pdf.js for exporting single page PDF -->
@@ -16,7 +16,7 @@
         .a4-page {
             width: 210mm;
             height: 297mm;
-            padding: 15mm 18mm;
+            padding: 12mm 15mm;
             background: white;
             box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
             margin: 0 auto;
@@ -29,8 +29,8 @@
         }
 
         .checkbox-custom {
-            width: 16px;
-            height: 16px;
+            width: 15px;
+            height: 15px;
             border: 1.5px solid #64748b;
             border-radius: 3px;
             display: inline-flex;
@@ -46,7 +46,7 @@
         .checkbox-custom.checked::after {
             content: '✓';
             color: white;
-            font-size: 11px;
+            font-size: 10px;
             font-weight: bold;
         }
 
@@ -62,333 +62,86 @@
     <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6">
         
         <!-- CONTROL PANEL (LEFT) -->
-        <div class="lg:col-span-5 bg-white rounded-2xl shadow-md p-6 space-y-5 no-print max-h-[90vh] overflow-y-auto">
-            <div class="border-b pb-3">
-                <h1 class="text-2xl font-bold text-slate-800">Daily Study Planner</h1>
-                <p class="text-xs text-slate-500">Fill your daily progress, tick completed work, and share as PDF with your mentor.</p>
+        <div class="lg:col-span-5 bg-white rounded-2xl shadow-md p-5 space-y-4 no-print max-h-[92vh] overflow-y-auto">
+            <div class="border-b pb-2">
+                <h1 class="text-xl font-bold text-slate-800">Daily Study Planner</h1>
+                <p class="text-xs text-slate-500">Track lectures, notes/DPP matrix, custom PYQs & test scores for your mentor.</p>
             </div>
 
             <!-- Date Input -->
             <div>
                 <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Date</label>
-                <input type="date" id="inputDate" class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500">
+                <input type="date" id="inputDate" class="w-full px-3 py-1.5 border rounded-lg text-xs focus:ring-2 focus:ring-blue-500">
             </div>
 
-            <!-- Class Tracker Inputs -->
+            <!-- 1. Class Tracker Controls -->
             <div>
-                <div class="flex justify-between items-center mb-2">
+                <div class="flex justify-between items-center mb-1.5">
                     <label class="text-xs font-bold uppercase tracking-wider text-slate-600">Class Tracker</label>
-                    <button onclick="addClassRow()" class="text-xs bg-blue-50 text-blue-600 font-semibold px-2 py-1 rounded hover:bg-blue-100">+ Add Class</button>
+                    <button onclick="addClassRow()" class="text-[11px] bg-blue-50 text-blue-600 font-semibold px-2 py-0.5 rounded hover:bg-blue-100">+ Add Class</button>
                 </div>
-                <div id="classInputs" class="space-y-2"></div>
+                <div id="classInputs" class="space-y-1.5"></div>
             </div>
 
-            <!-- Today's Study Work Checks -->
+            <!-- 2. Subject Matrix Controls (Notes, HW/DPP, Rev) -->
             <div>
-                <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Today's Study Work Ticks</label>
-                <div class="grid grid-cols-2 gap-2 text-sm" id="studyWorkCheckboxes">
-                    <!-- Populated via script -->
+                <div class="flex justify-between items-center mb-1.5">
+                    <label class="text-xs font-bold uppercase tracking-wider text-slate-600">Subject Matrix (Notes / DPP / Rev)</label>
+                    <button onclick="addMatrixRow()" class="text-[11px] bg-blue-50 text-blue-600 font-semibold px-2 py-0.5 rounded hover:bg-blue-100">+ Add Subject</button>
                 </div>
+                <div id="matrixInputs" class="space-y-1.5"></div>
             </div>
 
-            <!-- Test Section Toggle & Inputs -->
-            <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+            <!-- 3. Manual Custom Tasks (PYQs, Formula Rev, etc.) -->
+            <div>
+                <div class="flex justify-between items-center mb-1.5">
+                    <label class="text-xs font-bold uppercase tracking-wider text-slate-600">Manual / Extra Tasks (PYQs)</label>
+                    <button onclick="addCustomTask()" class="text-[11px] bg-emerald-50 text-emerald-600 font-semibold px-2 py-0.5 rounded hover:bg-emerald-100">+ Add Task</button>
+                </div>
+                <div id="customTaskInputs" class="space-y-1.5"></div>
+            </div>
+
+            <!-- 4. Test Section Toggle & Inputs -->
+            <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200">
                 <div class="flex items-center justify-between">
                     <label class="text-xs font-bold uppercase tracking-wider text-slate-700">Any Tests Today?</label>
-                    <div class="flex gap-4">
-                        <label class="inline-flex items-center text-sm"><input type="radio" name="hasTest" value="yes" onchange="toggleTestSection(true)" class="mr-1"> Yes</label>
-                        <label class="inline-flex items-center text-sm"><input type="radio" name="hasTest" value="no" onchange="toggleTestSection(false)" checked class="mr-1"> No</label>
+                    <div class="flex gap-3 text-xs">
+                        <label class="inline-flex items-center"><input type="radio" name="hasTest" value="yes" onchange="toggleTestSection(true)" class="mr-1"> Yes</label>
+                        <label class="inline-flex items-center"><input type="radio" name="hasTest" value="no" onchange="toggleTestSection(false)" checked class="mr-1"> No</label>
                     </div>
                 </div>
 
-                <div id="testFields" class="mt-3 space-y-2 hidden">
-                    <input type="text" id="testName" placeholder="Test Name (e.g., JEE Main Mock 3)" oninput="updateState()" class="w-full text-xs px-2.5 py-1.5 border rounded">
+                <div id="testFields" class="mt-2 space-y-1.5 hidden">
+                    <input type="text" id="testName" placeholder="Test Name (e.g. JEE Main Mock 3)" oninput="updateState()" class="w-full text-xs px-2 py-1 border rounded">
                     <div class="grid grid-cols-2 gap-2">
-                        <input type="text" id="testScore" placeholder="Score (e.g., 180/300)" oninput="updateState()" class="text-xs px-2.5 py-1.5 border rounded">
-                        <input type="text" id="testAccuracy" placeholder="Accuracy (e.g., 85%)" oninput="updateState()" class="text-xs px-2.5 py-1.5 border rounded">
+                        <input type="text" id="testScore" placeholder="Score (e.g. 180/300)" oninput="updateState()" class="text-xs px-2 py-1 border rounded">
+                        <input type="text" id="testAccuracy" placeholder="Accuracy (e.g. 85%)" oninput="updateState()" class="text-xs px-2 py-1 border rounded">
                     </div>
                 </div>
             </div>
 
-            <!-- Self Reflection Inputs -->
-            <div class="space-y-3">
+            <!-- 5. Self Reflection Inputs -->
+            <div class="space-y-2">
                 <div>
                     <label class="block text-xs font-semibold text-slate-600">1 Mistake I Must Not Repeat</label>
-                    <input type="text" id="mistakeInput" placeholder="e.g. Calculation error in Integration" oninput="updateState()" class="w-full text-xs px-2.5 py-1.5 border rounded">
+                    <input type="text" id="mistakeInput" placeholder="e.g. Calculation error in Integration" oninput="updateState()" class="w-full text-xs px-2 py-1 border rounded">
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-slate-600">Today I Improved At</label>
-                    <input type="text" id="improvementInput" placeholder="e.g. Solved 30 Organic Chemistry PYQs faster" oninput="updateState()" class="w-full text-xs px-2.5 py-1.5 border rounded">
+                    <input type="text" id="improvementInput" placeholder="e.g. Solved 30 Organic PYQs faster" oninput="updateState()" class="w-full text-xs px-2 py-1 border rounded">
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-slate-600">Notes / Remarks for Mentor</label>
-                    <textarea id="notesInput" rows="2" placeholder="Write any query or note for your mentor..." oninput="updateState()" class="w-full text-xs px-2.5 py-1.5 border rounded"></textarea>
+                    <textarea id="notesInput" rows="1.5" placeholder="Write any query or note for your mentor..." oninput="updateState()" class="w-full text-xs px-2 py-1 border rounded"></textarea>
                 </div>
             </div>
 
             <!-- Share Buttons -->
-            <div class="pt-3 flex gap-3">
-                <button onclick="downloadPDF()" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-xl text-sm shadow transition flex items-center justify-center gap-2">
+            <div class="pt-2 flex gap-3">
+                <button onclick="downloadPDF()" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-xl text-xs shadow transition flex items-center justify-center gap-2">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
                     Share PDF to Mentor
                 </button>
             </div>
         </div>
-
-        <!-- LIVE PREVIEW SHEET (RIGHT) -->
-        <div class="lg:col-span-7 flex justify-center overflow-x-auto">
-            <div id="pdfContent" class="a4-page rounded-lg">
-                
-                <!-- Page Header -->
-                <div>
-                    <div class="flex justify-between items-center border-b-2 border-slate-800 pb-3 mb-4">
-                        <div>
-                            <h2 class="text-xl font-bold tracking-tight text-slate-900 uppercase">Daily Study Tracker</h2>
-                            <p class="text-[10px] text-slate-500 uppercase tracking-widest font-semibold">Mentor Report Sheet</p>
-                        </div>
-                        <div class="text-right">
-                            <span class="text-xs font-bold text-slate-500 uppercase">Date:</span>
-                            <span id="prevDate" class="text-sm font-bold text-slate-900 ml-1 border-b border-slate-400 pb-0.5 px-2">__/ __/ ____</span>
-                        </div>
-                    </div>
-
-                    <!-- 1. Class Tracker -->
-                    <div class="mb-4">
-                        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-800 border-b border-slate-300 pb-1 mb-2">Class Tracker</h3>
-                        <table class="w-full text-xs">
-                            <thead>
-                                <tr class="text-left text-slate-500 border-b border-slate-200 pb-1">
-                                    <th class="py-1 font-semibold">Subject</th>
-                                    <th class="py-1 font-semibold">Topic</th>
-                                    <th class="py-1 font-semibold">Teacher</th>
-                                    <th class="py-1 font-semibold text-center w-28">Attended</th>
-                                </tr>
-                            </thead>
-                            <tbody id="prevClasses"></tbody>
-                        </table>
-                    </div>
-
-                    <!-- 2. Today's Study Work -->
-                    <div class="mb-4">
-                        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-800 border-b border-slate-300 pb-1 mb-2">Today's Study Work</h3>
-                        <div class="grid grid-cols-2 gap-y-2 text-xs" id="prevStudyWork"></div>
-                    </div>
-
-                    <!-- 3. Test Section -->
-                    <div class="mb-4">
-                        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-800 border-b border-slate-300 pb-1 mb-2">Any Tests ?</h3>
-                        <div id="prevTestContent" class="text-xs text-slate-700"></div>
-                    </div>
-
-                    <!-- 4. Reflection Section -->
-                    <div class="space-y-3 mb-4 text-xs">
-                        <div>
-                            <span class="font-bold text-slate-800 block mb-0.5">1 Mistake I Must Not Repeat:</span>
-                            <div id="prevMistake" class="text-slate-700 bg-slate-50 p-2 rounded border border-slate-200 min-h-[26px]"></div>
-                        </div>
-                        <div>
-                            <span class="font-bold text-slate-800 block mb-0.5">Today I Improved At:</span>
-                            <div id="prevImprovement" class="text-slate-700 bg-slate-50 p-2 rounded border border-slate-200 min-h-[26px]"></div>
-                        </div>
-                        <div>
-                            <span class="font-bold text-slate-800 block mb-0.5">Notes:</span>
-                            <div id="prevNotes" class="text-slate-700 bg-slate-50 p-2 rounded border border-slate-200 min-h-[40px]"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Footer Signatures -->
-                <div class="border-t border-slate-300 pt-3 flex justify-between items-end text-xs text-slate-500 mt-auto">
-                    <div>
-                        <p class="font-medium text-slate-700">Student Signature</p>
-                        <div class="h-6"></div>
-                    </div>
-                    <div>
-                        <p class="font-medium text-slate-700">Mentor Feedback / Remarks</p>
-                        <div class="h-6"></div>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-
-    </div>
-
-    <script>
-        let state = {
-            date: new Date().toISOString().split('T')[0],
-            classes: [
-                { subject: 'Physics', topic: 'Electrostatics L-1', teacher: 'NV Sir', type: 'Live', attended: true },
-                { subject: 'Maths', topic: 'Integration L-2', teacher: 'GB Sir', type: 'Recorded', attended: true },
-                { subject: 'Chemistry', topic: 'Chemical Bonding', teacher: 'VK Sir', type: 'Live', attended: false }
-            ],
-            studyWork: [
-                { id: 'theory', label: 'Theory Revised', checked: true },
-                { id: 'dpp', label: 'DPP Solved', checked: true },
-                { id: 'pyq', label: 'PYQs Practiced', checked: false },
-                { id: 'practice', label: 'Practice Sheet Attempted', checked: false },
-                { id: 'formula', label: 'Formula Revised', checked: true }
-            ],
-            hasTest: false,
-            testName: '',
-            testScore: '',
-            testAccuracy: '',
-            mistake: '',
-            improvement: '',
-            notes: ''
-        };
-
-        function init() {
-            document.getElementById('inputDate').value = state.date;
-            renderClassInputs();
-            renderWorkInputs();
-            renderPreview();
-        }
-
-        function renderClassInputs() {
-            const container = document.getElementById('classInputs');
-            container.innerHTML = '';
-            state.classes.forEach((c, i) => {
-                const div = document.createElement('div');
-                div.className = 'grid grid-cols-12 gap-1.5 items-center';
-                div.innerHTML = `
-                    <input type="text" value="${c.subject}" placeholder="Subject" oninput="state.classes[${i}].subject = this.value; renderPreview();" class="col-span-3 text-xs px-2 py-1 border rounded">
-                    <input type="text" value="${c.topic}" placeholder="Topic" oninput="state.classes[${i}].topic = this.value; renderPreview();" class="col-span-3 text-xs px-2 py-1 border rounded">
-                    <input type="text" value="${c.teacher}" placeholder="Teacher" oninput="state.classes[${i}].teacher = this.value; renderPreview();" class="col-span-3 text-xs px-2 py-1 border rounded">
-                    <select onchange="state.classes[${i}].type = this.value; renderPreview();" class="col-span-2 text-xs border rounded py-1">
-                        <option value="Live" ${c.type === 'Live' ? 'selected' : ''}>Live</option>
-                        <option value="Recorded" ${c.type === 'Recorded' ? 'selected' : ''}>Recorded</option>
-                    </select>
-                    <button onclick="removeClassRow(${i})" class="col-span-1 text-slate-400 hover:text-red-500 font-bold">×</button>
-                `;
-                container.appendChild(div);
-            });
-        }
-
-        function renderWorkInputs() {
-            const container = document.getElementById('studyWorkCheckboxes');
-            container.innerHTML = '';
-            state.studyWork.forEach((item, i) => {
-                const label = document.createElement('label');
-                label.className = 'flex items-center gap-2 cursor-pointer text-xs text-slate-700';
-                label.innerHTML = `
-                    <input type="checkbox" ${item.checked ? 'checked' : ''} onchange="state.studyWork[${i}].checked = this.checked; renderPreview();" class="rounded text-blue-600">
-                    ${item.label}
-                `;
-                container.appendChild(label);
-            });
-        }
-
-        function addClassRow() {
-            state.classes.push({ subject: '', topic: '', teacher: '', type: 'Live', attended: false });
-            renderClassInputs();
-            renderPreview();
-        }
-
-        function removeClassRow(i) {
-            state.classes.splice(i, 1);
-            renderClassInputs();
-            renderPreview();
-        }
-
-        function toggleTestSection(show) {
-            state.hasTest = show;
-            document.getElementById('testFields').classList.toggle('hidden', !show);
-            renderPreview();
-        }
-
-        function toggleTick(i) {
-            state.classes[i].attended = !state.classes[i].attended;
-            renderPreview();
-        }
-
-        function toggleWorkTick(i) {
-            state.studyWork[i].checked = !state.studyWork[i].checked;
-            renderWorkInputs();
-            renderPreview();
-        }
-
-        function updateState() {
-            state.date = document.getElementById('inputDate').value;
-            state.testName = document.getElementById('testName').value;
-            state.testScore = document.getElementById('testScore').value;
-            state.testAccuracy = document.getElementById('testAccuracy').value;
-            state.mistake = document.getElementById('mistakeInput').value;
-            state.improvement = document.getElementById('improvementInput').value;
-            state.notes = document.getElementById('notesInput').value;
-            renderPreview();
-        }
-
-        function renderPreview() {
-            // Date
-            document.getElementById('prevDate').innerText = state.date || '__/ __/ ____';
-
-            // Classes Table
-            const classBody = document.getElementById('prevClasses');
-            classBody.innerHTML = '';
-            state.classes.forEach((c, i) => {
-                const tr = document.createElement('tr');
-                tr.className = 'border-b border-slate-100';
-                tr.innerHTML = `
-                    <td class="py-1.5 font-medium text-slate-800">${c.subject || '-'}</td>
-                    <td class="py-1.5 text-slate-600">${c.topic || '-'}</td>
-                    <td class="py-1.5 text-slate-600">${c.teacher || '-'}</td>
-                    <td class="py-1.5 text-center">
-                        <div onclick="toggleTick(${i})" class="checkbox-custom ${c.attended ? 'checked' : ''} mx-auto"></div>
-                        <span class="text-[9px] text-slate-400 block">${c.type}</span>
-                    </td>
-                `;
-                classBody.appendChild(tr);
-            });
-
-            // Study Work
-            const workContainer = document.getElementById('prevStudyWork');
-            workContainer.innerHTML = '';
-            state.studyWork.forEach((item, i) => {
-                const div = document.createElement('div');
-                div.className = 'flex items-center gap-2 cursor-pointer';
-                div.onclick = () => toggleWorkTick(i);
-                div.innerHTML = `
-                    <div class="checkbox-custom ${item.checked ? 'checked' : ''}"></div>
-                    <span class="text-slate-700">${item.label}</span>
-                `;
-                workContainer.appendChild(div);
-            });
-
-            // Test Content
-            const testContainer = document.getElementById('prevTestContent');
-            if (state.hasTest) {
-                testContainer.innerHTML = `
-                    <div class="flex gap-4 items-center bg-blue-50/50 p-2 rounded border border-blue-100">
-                        <span class="font-bold text-blue-900">✓ Yes</span>
-                        <span class="text-slate-600">| <b>Test:</b> ${state.testName || 'N/A'}</span>
-                        <span class="text-slate-600">| <b>Score:</b> ${state.testScore || 'N/A'}</span>
-                        <span class="text-slate-600">| <b>Accuracy:</b> ${state.testAccuracy || 'N/A'}</span>
-                    </div>
-                `;
-            } else {
-                testContainer.innerHTML = `<span class="text-slate-500 italic">No tests taken today.</span>`;
-            }
-
-            // Reflection Text
-            document.getElementById('prevMistake').innerText = state.mistake;
-            document.getElementById('prevImprovement').innerText = state.improvement;
-            document.getElementById('prevNotes').innerText = state.notes;
-        }
-
-        function downloadPDF() {
-            const element = document.getElementById('pdfContent');
-            const options = {
-                margin: 0,
-                filename: `Study_Tracker_${state.date}.pdf`,
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, useCORS: true },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-            };
-            html2pdf().from(element).set(options).save();
-        }
-
-        window.onload = init;
-    </script>
-</body>
-</html>
+        
