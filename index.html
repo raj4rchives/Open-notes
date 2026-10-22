@@ -144,4 +144,313 @@
                 </button>
             </div>
         </div>
-        
+                <!-- LIVE PREVIEW SHEET (RIGHT) -->
+        <div class="lg:col-span-7 flex justify-center overflow-x-auto">
+            <div id="pdfContent" class="a4-page rounded-lg">
+                
+                <div>
+                    <!-- Page Header -->
+                    <div class="flex justify-between items-center border-b-2 border-slate-800 pb-2 mb-3">
+                        <div>
+                            <h2 class="text-lg font-bold tracking-tight text-slate-900 uppercase">Daily Study Tracker</h2>
+                            <p class="text-[9px] text-slate-500 uppercase tracking-widest font-semibold">Mentor Progress Report</p>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-xs font-bold text-slate-500 uppercase">Date:</span>
+                            <span id="prevDate" class="text-xs font-bold text-slate-900 ml-1 border-b border-slate-400 pb-0.5 px-2">23/10/2026</span>
+                        </div>
+                    </div>
+
+                    <!-- Section 1: Class Tracker -->
+                    <div class="mb-3">
+                        <h3 class="text-[11px] font-bold uppercase tracking-wider text-slate-800 border-b border-slate-300 pb-0.5 mb-1">1. Class Tracker</h3>
+                        <table class="w-full text-[11px]">
+                            <thead>
+                                <tr class="text-left text-slate-500 border-b border-slate-200">
+                                    <th class="py-0.5 font-semibold">Subject</th>
+                                    <th class="py-0.5 font-semibold">Topic</th>
+                                    <th class="py-0.5 font-semibold">Teacher</th>
+                                    <th class="py-0.5 font-semibold text-center w-24">Attended</th>
+                                </tr>
+                            </thead>
+                            <tbody id="prevClasses"></tbody>
+                        </table>
+                    </div>
+
+                    <!-- Section 2: Daily Study Work Matrix (Notes, HW/DPP, Rev) -->
+                    <div class="mb-3">
+                        <h3 class="text-[11px] font-bold uppercase tracking-wider text-slate-800 border-b border-slate-300 pb-0.5 mb-1">2. Today's Work Matrix</h3>
+                        <table class="w-full text-[11px] border-collapse border border-slate-200">
+                            <thead>
+                                <tr class="bg-slate-50 text-slate-600">
+                                    <th class="border border-slate-200 py-1 px-2 text-left font-semibold">Subject / Lecture</th>
+                                    <th class="border border-slate-200 py-1 text-center font-semibold w-16">Notes</th>
+                                    <th class="border border-slate-200 py-1 text-center font-semibold w-20">HW / DPP</th>
+                                    <th class="border border-slate-200 py-1 text-center font-semibold w-16">Rev</th>
+                                </tr>
+                            </thead>
+                            <tbody id="prevMatrix"></tbody>
+                        </table>
+                    </div>
+
+                    <!-- Section 3: Extra Tasks & PYQs -->
+                    <div class="mb-3">
+                        <h3 class="text-[11px] font-bold uppercase tracking-wider text-slate-800 border-b border-slate-300 pb-0.5 mb-1">3. Extra Tasks & PYQs Practice</h3>
+                        <div id="prevCustomTasks" class="grid grid-cols-2 gap-x-4 gap-y-1 text-[11px] pt-1"></div>
+                    </div>
+
+                    <!-- Section 4: Test Query -->
+                    <div class="mb-3">
+                        <h3 class="text-[11px] font-bold uppercase tracking-wider text-slate-800 border-b border-slate-300 pb-0.5 mb-1">4. Any Tests Today?</h3>
+                        <div id="prevTestContent" class="text-[11px] text-slate-700"></div>
+                    </div>
+
+                    <!-- Section 5: Self Reflection -->
+                    <div class="space-y-1.5 text-[11px]">
+                        <div>
+                            <span class="font-bold text-slate-800 block">1 Mistake I Must Not Repeat:</span>
+                            <div id="prevMistake" class="text-slate-700 bg-slate-50 px-2 py-1 rounded border border-slate-200 min-h-[22px]"></div>
+                        </div>
+                        <div>
+                            <span class="font-bold text-slate-800 block">Today I Improved At:</span>
+                            <div id="prevImprovement" class="text-slate-700 bg-slate-50 px-2 py-1 rounded border border-slate-200 min-h-[22px]"></div>
+                        </div>
+                        <div>
+                            <span class="font-bold text-slate-800 block">Notes / Mentor Queries:</span>
+                            <div id="prevNotes" class="text-slate-700 bg-slate-50 px-2 py-1 rounded border border-slate-200 min-h-[28px]"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer Signatures -->
+                <div class="border-t border-slate-300 pt-2 flex justify-between items-end text-[10px] text-slate-500 mt-auto">
+                    <div>
+                        <p class="font-medium text-slate-700">Student Signature</p>
+                        <div class="h-4"></div>
+                    </div>
+                    <div>
+                        <p class="font-medium text-slate-700">Mentor Remarks / Signature</p>
+                        <div class="h-4"></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        let state = {
+            date: '2026-10-23',
+            classes: [
+                { subject: 'Physics', topic: 'L-1 Electrostatics', teacher: 'NV Sir', type: 'Live', attended: true },
+                { subject: 'Maths', topic: 'L-1 Integration', teacher: 'GB Sir', type: 'Recorded', attended: true },
+                { subject: 'PC', topic: 'L-1, 2 Mole Concept', teacher: 'ALK Sir', type: 'Live', attended: false },
+                { subject: 'IOC', topic: 'L-1 Periodic Table', teacher: 'VJ Sir', type: 'Live', attended: true }
+            ],
+            matrix: [
+                { subject: 'Phy -> L-1', notes: true, hw: true, rev: false },
+                { subject: 'Maths -> L-1', notes: true, hw: false, rev: false },
+                { subject: 'PC -> L-1, 2', notes: true, hw: true, rev: true },
+                { subject: 'IOC -> L-1', notes: true, hw: false, rev: true }
+            ],
+            customTasks: [
+                { title: 'Phy PYQs Solve', detail: '10 Qs', checked: true },
+                { title: 'Maths Solved Examples', detail: '15 Qs', checked: false }
+            ],
+            hasTest: false,
+            testName: '',
+            testScore: '',
+            testAccuracy: '',
+            mistake: '',
+            improvement: '',
+            notes: ''
+        };
+
+        function init() {
+            document.getElementById('inputDate').value = state.date;
+            renderClassInputs();
+            renderMatrixInputs();
+            renderCustomTaskInputs();
+            renderPreview();
+        }
+
+        /* Class Inputs */
+        function renderClassInputs() {
+            const container = document.getElementById('classInputs');
+            container.innerHTML = '';
+            state.classes.forEach((c, i) => {
+                const div = document.createElement('div');
+                div.className = 'grid grid-cols-12 gap-1 items-center';
+                div.innerHTML = `
+                    <input type="text" value="${c.subject}" placeholder="Sub" oninput="state.classes[${i}].subject = this.value; renderPreview();" class="col-span-3 text-xs px-1.5 py-1 border rounded">
+                    <input type="text" value="${c.topic}" placeholder="Topic" oninput="state.classes[${i}].topic = this.value; renderPreview();" class="col-span-3 text-xs px-1.5 py-1 border rounded">
+                    <input type="text" value="${c.teacher}" placeholder="Teacher" oninput="state.classes[${i}].teacher = this.value; renderPreview();" class="col-span-3 text-xs px-1.5 py-1 border rounded">
+                    <select onchange="state.classes[${i}].type = this.value; renderPreview();" class="col-span-2 text-xs border rounded py-1">
+                        <option value="Live" ${c.type === 'Live' ? 'selected' : ''}>Live</option>
+                        <option value="Recorded" ${c.type === 'Recorded' ? 'selected' : ''}>Rec</option>
+                    </select>
+                    <button onclick="state.classes.splice(${i}, 1); renderClassInputs(); renderPreview();" class="col-span-1 text-slate-400 hover:text-red-500 font-bold">×</button>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function addClassRow() {
+            state.classes.push({ subject: '', topic: '', teacher: '', type: 'Live', attended: false });
+            renderClassInputs();
+            renderPreview();
+        }
+
+        /* Matrix Inputs (Notes, HW/DPP, Rev) */
+        function renderMatrixInputs() {
+            const container = document.getElementById('matrixInputs');
+            container.innerHTML = '';
+            state.matrix.forEach((m, i) => {
+                const div = document.createElement('div');
+                div.className = 'flex gap-2 items-center text-xs';
+                div.innerHTML = `
+                    <input type="text" value="${m.subject}" placeholder="Subject / Lec" oninput="state.matrix[${i}].subject = this.value; renderPreview();" class="flex-1 px-2 py-1 border rounded">
+                    <label class="flex items-center gap-0.5"><input type="checkbox" ${m.notes ? 'checked' : ''} onchange="state.matrix[${i}].notes = this.checked; renderPreview();"> Notes</label>
+                    <label class="flex items-center gap-0.5"><input type="checkbox" ${m.hw ? 'checked' : ''} onchange="state.matrix[${i}].hw = this.checked; renderPreview();"> HW</label>
+                    <label class="flex items-center gap-0.5"><input type="checkbox" ${m.rev ? 'checked' : ''} onchange="state.matrix[${i}].rev = this.checked; renderPreview();"> Rev</label>
+                    <button onclick="state.matrix.splice(${i}, 1); renderMatrixInputs(); renderPreview();" class="text-slate-400 hover:text-red-500 font-bold">×</button>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function addMatrixRow() {
+            state.matrix.push({ subject: 'New Subject', notes: false, hw: false, rev: false });
+            renderMatrixInputs();
+            renderPreview();
+        }
+
+        /* Manual Custom Task Inputs */
+        function renderCustomTaskInputs() {
+            const container = document.getElementById('customTaskInputs');
+            container.innerHTML = '';
+            state.customTasks.forEach((t, i) => {
+                const div = document.createElement('div');
+                div.className = 'flex gap-1.5 items-center text-xs';
+                div.innerHTML = `
+                    <input type="text" value="${t.title}" placeholder="Task name (e.g. Phy PYQs)" oninput="state.customTasks[${i}].title = this.value; renderPreview();" class="flex-1 px-2 py-1 border rounded">
+                    <input type="text" value="${t.detail}" placeholder="Detail (10 Qs)" oninput="state.customTasks[${i}].detail = this.value; renderPreview();" class="w-20 px-2 py-1 border rounded">
+                    <button onclick="state.customTasks.splice(${i}, 1); renderCustomTaskInputs(); renderPreview();" class="text-slate-400 hover:text-red-500 font-bold">×</button>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function addCustomTask() {
+            state.customTasks.push({ title: 'Phy PYQs Solve', detail: '10 Qs', checked: false });
+            renderCustomTaskInputs();
+            renderPreview();
+        }
+
+        function toggleTestSection(show) {
+            state.hasTest = show;
+            document.getElementById('testFields').classList.toggle('hidden', !show);
+            renderPreview();
+        }
+
+        function updateState() {
+            state.date = document.getElementById('inputDate').value;
+            state.testName = document.getElementById('testName').value;
+            state.testScore = document.getElementById('testScore').value;
+            state.testAccuracy = document.getElementById('testAccuracy').value;
+            state.mistake = document.getElementById('mistakeInput').value;
+            state.improvement = document.getElementById('improvementInput').value;
+            state.notes = document.getElementById('notesInput').value;
+            renderPreview();
+        }
+
+        /* Render Preview Page */
+        function renderPreview() {
+            document.getElementById('prevDate').innerText = state.date || '23/10/2026';
+
+            // 1. Classes Table
+            const classBody = document.getElementById('prevClasses');
+            classBody.innerHTML = '';
+            state.classes.forEach((c, i) => {
+                const tr = document.createElement('tr');
+                tr.className = 'border-b border-slate-100';
+                tr.innerHTML = `
+                    <td class="py-1 font-medium text-slate-800">${c.subject || '-'}</td>
+                    <td class="py-1 text-slate-600">${c.topic || '-'}</td>
+                    <td class="py-1 text-slate-600">${c.teacher || '-'}</td>
+                    <td class="py-1 text-center">
+                        <div onclick="state.classes[${i}].attended = !state.classes[${i}].attended; renderPreview();" class="checkbox-custom ${c.attended ? 'checked' : ''} mx-auto"></div>
+                    </td>
+                `;
+                classBody.appendChild(tr);
+            });
+
+            // 2. Matrix Table
+            const matrixBody = document.getElementById('prevMatrix');
+            matrixBody.innerHTML = '';
+            state.matrix.forEach((m, i) => {
+                const tr = document.createElement('tr');
+                tr.className = 'border-b border-slate-100';
+                tr.innerHTML = `
+                    <td class="border border-slate-200 py-1 px-2 font-medium text-slate-800">${m.subject}</td>
+                    <td class="border border-slate-200 py-1 text-center"><div onclick="state.matrix[${i}].notes = !state.matrix[${i}].notes; renderMatrixInputs(); renderPreview();" class="checkbox-custom ${m.notes ? 'checked' : ''} mx-auto"></div></td>
+                    <td class="border border-slate-200 py-1 text-center"><div onclick="state.matrix[${i}].hw = !state.matrix[${i}].hw; renderMatrixInputs(); renderPreview();" class="checkbox-custom ${m.hw ? 'checked' : ''} mx-auto"></div></td>
+                    <td class="border border-slate-200 py-1 text-center"><div onclick="state.matrix[${i}].rev = !state.matrix[${i}].rev; renderMatrixInputs(); renderPreview();" class="checkbox-custom ${m.rev ? 'checked' : ''} mx-auto"></div></td>
+                `;
+                matrixBody.appendChild(tr);
+            });
+
+            // 3. Custom Tasks & PYQs
+            const customContainer = document.getElementById('prevCustomTasks');
+            customContainer.innerHTML = '';
+            state.customTasks.forEach((t, i) => {
+                const div = document.createElement('div');
+                div.className = 'flex items-center gap-1.5 cursor-pointer';
+                div.onclick = () => { state.customTasks[i].checked = !state.customTasks[i].checked; renderPreview(); };
+                div.innerHTML = `
+                    <div class="checkbox-custom ${t.checked ? 'checked' : ''}"></div>
+                    <span class="font-medium text-slate-800">${t.title}</span>
+                    ${t.detail ? `<span class="text-[10px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded font-semibold ml-auto">${t.detail}</span>` : ''}
+                `;
+                customContainer.appendChild(div);
+            });
+
+            // 4. Test Query
+            const testContainer = document.getElementById('prevTestContent');
+            if (state.hasTest) {
+                testContainer.innerHTML = `
+                    <div class="flex gap-3 items-center bg-blue-50/50 p-1.5 rounded border border-blue-100">
+                        <span class="font-bold text-blue-900">✓ Yes</span>
+                        <span class="text-slate-600">| <b>Test:</b> ${state.testName || 'N/A'}</span>
+                        <span class="text-slate-600">| <b>Score:</b> ${state.testScore || 'N/A'}</span>
+                        <span class="text-slate-600">| <b>Accuracy:</b> ${state.testAccuracy || 'N/A'}</span>
+                    </div>
+                `;
+            } else {
+                testContainer.innerHTML = `<span class="text-slate-500 italic">No tests taken today.</span>`;
+            }
+
+            // 5. Reflection Notes
+            document.getElementById('prevMistake').innerText = state.mistake;
+            document.getElementById('prevImprovement').innerText = state.improvement;
+            document.getElementById('prevNotes').innerText = state.notes;
+        }
+
+        function downloadPDF() {
+            const element = document.getElementById('pdfContent');
+            const options = {
+                margin: 0,
+                filename: `Study_Tracker_${state.date}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+            html2pdf().from(element).set(options).save();
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>
+
