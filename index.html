@@ -47,7 +47,7 @@
         <div class="lg:col-span-5 bg-white rounded-2xl shadow-lg p-6 space-y-6 no-print">
             <div>
                 <h1 class="text-2xl font-bold text-slate-800">To-Do List Builder</h1>
-                <p class="text-sm text-slate-500 mt-1">Customize your study plan and export directly as a PDF for your mentor.</p>
+                <p class="text-sm text-slate-500 mt-1">Customize your study plan, add manual tasks/PYQs, and export as a PDF.</p>
             </div>
 
             <!-- Date Selection -->
@@ -63,7 +63,7 @@
                     <button onclick="addLectureRow()" class="text-xs bg-indigo-50 text-indigo-600 font-medium px-2.5 py-1 rounded-md hover:bg-indigo-100">+ Add Lecture</button>
                 </div>
                 <div id="lectureInputs" class="space-y-3">
-                    <!-- Dynamic lecture inputs populated by script -->
+                    <!-- Dynamic lecture inputs -->
                 </div>
             </div>
 
@@ -74,7 +74,18 @@
                     <button onclick="addTaskRow()" class="text-xs bg-indigo-50 text-indigo-600 font-medium px-2.5 py-1 rounded-md hover:bg-indigo-100">+ Add Subject</button>
                 </div>
                 <div id="taskInputs" class="space-y-3">
-                    <!-- Dynamic task inputs populated by script -->
+                    <!-- Dynamic task inputs -->
+                </div>
+            </div>
+
+            <!-- Custom Manual Tasks Controls (PYQs, Test Prep, Extra Practice) -->
+            <div class="pt-2 border-t border-slate-100">
+                <div class="flex justify-between items-center mb-2">
+                    <label class="text-sm font-semibold text-slate-700">Manual / Extra Tasks (e.g. PYQs)</label>
+                    <button onclick="addCustomTaskRow()" class="text-xs bg-emerald-50 text-emerald-600 font-medium px-2.5 py-1 rounded-md hover:bg-emerald-100">+ Add Task</button>
+                </div>
+                <div id="customTaskInputs" class="space-y-3">
+                    <!-- Dynamic custom task inputs -->
                 </div>
             </div>
 
@@ -107,7 +118,7 @@
                 </div>
 
                 <!-- Section 1: Lectures -->
-                <div class="mb-8">
+                <div class="mb-6">
                     <h3 class="text-md font-bold uppercase tracking-wider text-slate-800 bg-slate-100 px-3 py-1.5 rounded mb-3 border-l-4 border-indigo-600">
                         1. Lectures Target
                     </h3>
@@ -117,7 +128,7 @@
                 </div>
 
                 <!-- Section 2: Tasks Matrix -->
-                <div class="mb-8">
+                <div class="mb-6">
                     <h3 class="text-md font-bold uppercase tracking-wider text-slate-800 bg-slate-100 px-3 py-1.5 rounded mb-3 border-l-4 border-indigo-600">
                         2. Daily Tasks & Practice Matrix
                     </h3>
@@ -136,15 +147,25 @@
                     </table>
                 </div>
 
+                <!-- Section 3: Extra Manual Tasks & PYQs -->
+                <div class="mb-6">
+                    <h3 class="text-md font-bold uppercase tracking-wider text-slate-800 bg-slate-100 px-3 py-1.5 rounded mb-3 border-l-4 border-emerald-600">
+                        3. Extra Tasks & PYQs Practice
+                    </h3>
+                    <div id="previewCustomTasks" class="space-y-2.5 pl-2">
+                        <!-- Rendered dynamically -->
+                    </div>
+                </div>
+
                 <!-- Mentor Sign-off Section -->
-                <div class="mt-16 pt-6 border-t border-dashed border-slate-300 flex justify-between items-end text-sm text-slate-500">
+                <div class="mt-12 pt-6 border-t border-dashed border-slate-300 flex justify-between items-end text-sm text-slate-500">
                     <div>
                         <p class="font-medium text-slate-700">Student Signature:</p>
-                        <div class="h-10 mt-2"></div>
+                        <div class="h-8 mt-2"></div>
                     </div>
                     <div>
                         <p class="font-medium text-slate-700">Mentor Remarks / Signature:</p>
-                        <div class="h-10 mt-2"></div>
+                        <div class="h-8 mt-2"></div>
                     </div>
                 </div>
 
@@ -155,7 +176,7 @@
 
     <!-- Script to handle dynamic inputs and live preview -->
     <script>
-        // Initial state matching the handwritten note
+        // Initial state with lectures, study matrix, and manual PYQ tasks
         let state = {
             date: "23/10/2026",
             lectures: [
@@ -170,6 +191,10 @@
                 { id: 3, subject: "PC - Lecture 1" },
                 { id: 4, subject: "PC - Lecture 2" },
                 { id: 5, subject: "IOC" }
+            ],
+            customTasks: [
+                { id: 1, title: "Physics PYQs Solve", detail: "30 Questions" },
+                { id: 2, title: "Maths Important Examples", detail: "15 Questions" }
             ]
         };
 
@@ -211,6 +236,20 @@
                 `;
                 taskContainer.appendChild(div);
             });
+
+            // Render Custom Task Inputs
+            const customTaskContainer = document.getElementById('customTaskInputs');
+            customTaskContainer.innerHTML = '';
+            state.customTasks.forEach((cTask, index) => {
+                const div = document.createElement('div');
+                div.className = 'flex gap-2 items-center';
+                div.innerHTML = `
+                    <input type="text" placeholder="Task name" value="${cTask.title}" oninput="updateCustomTask(${index}, 'title', this.value)" class="flex-1 px-3 py-1.5 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                    <input type="text" placeholder="Target / Details" value="${cTask.detail}" oninput="updateCustomTask(${index}, 'detail', this.value)" class="w-32 px-3 py-1.5 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                    <button onclick="removeCustomTask(${index})" class="text-slate-400 hover:text-red-600 p-1">×</button>
+                `;
+                customTaskContainer.appendChild(div);
+            });
         }
 
         function renderPreview() {
@@ -241,8 +280,27 @@
                 `;
                 previewTasks.appendChild(tr);
             });
+
+            // Render Preview Custom Tasks (PYQs / Extra Practice)
+            const previewCustomTasks = document.getElementById('previewCustomTasks');
+            previewCustomTasks.innerHTML = '';
+            if (state.customTasks.length === 0) {
+                previewCustomTasks.innerHTML = `<p class="text-xs text-slate-400 italic">No extra tasks added.</p>`;
+            } else {
+                state.customTasks.forEach((cTask) => {
+                    const row = document.createElement('div');
+                    row.className = 'flex items-center gap-3 py-1 border-b border-slate-100 last:border-none';
+                    row.innerHTML = `
+                        <div class="w-4 h-4 border-2 border-slate-400 rounded"></div>
+                        <span class="text-sm font-medium text-slate-800">${cTask.title}</span>
+                        ${cTask.detail ? `<span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium ml-auto">${cTask.detail}</span>` : ''}
+                    `;
+                    previewCustomTasks.appendChild(row);
+                });
+            }
         }
 
+        /* Update & Action Handlers */
         function updateLecture(index, val) {
             state.lectures[index].title = val;
             renderPreview();
@@ -266,13 +324,30 @@
         }
 
         function addTaskRow() {
-            state.tasks.push({ id: Date.now(), title: "New Subject" });
+            state.tasks.push({ id: Date.now(), subject: "New Subject" });
             renderInputs();
             renderPreview();
         }
 
         function removeTask(index) {
             state.tasks.splice(index, 1);
+            renderInputs();
+            renderPreview();
+        }
+
+        function updateCustomTask(index, field, val) {
+            state.customTasks[index][field] = val;
+            renderPreview();
+        }
+
+        function addCustomTaskRow() {
+            state.customTasks.push({ id: Date.now(), title: "Extra PYQ / Practice Task", detail: "20 Questions" });
+            renderInputs();
+            renderPreview();
+        }
+
+        function removeCustomTask(index) {
+            state.customTasks.splice(index, 1);
             renderInputs();
             renderPreview();
         }
